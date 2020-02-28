@@ -26,14 +26,21 @@ def takePicture(imageName):
 # camera.start_preview(alpha=200)
 
 # Display image on the LCD
-# def displayImg(fileName):
-#     # Loads the bitmap image
-#     bitmap, palette = adafruit_imageload.load(fileName, bitmap=displayio.Bitmap, palette=displayio.Palette)
-#     # Create a TileGrid to store the bitmap
-#     tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
-#     # Create a Group to store the TileGrid
-#     group = displayio.Group()
-#     # Add the titleGrid to the Group
-#     group.append(tile_grid)
-#     # Show the group
-#     display.show(group)
+def displayImg(fileName):
+    # Loads the bitmap image
+    bitmap, palette = adafruit_imageload.load(fileName, bitmap=displayio.Bitmap, palette=displayio.Palette)
+    # Create a TileGrid to store the bitmap
+    tile_grid = displayio.TileGrid(bitmap, pixel_shader=palette)
+    # Create a Group to store the TileGrid
+    group = displayio.Group()
+    # Add the titleGrid to the Group
+    group.append(tile_grid)
+    # Show the group
+    display.show(group)
+
+def record():
+    camera.start_preview()
+    camera.start_recording('/home/pi/Desktop/testvid.h264')
+    sleep(5)
+    camera.stop_recording()
+    camera.stop_preview()
