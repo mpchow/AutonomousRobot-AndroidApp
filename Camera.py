@@ -13,6 +13,15 @@ camera.capture('/home/pi/Desktop/image.bmp', resize=(128, 128))
 # displayImg()
 camera.stop_preview()
 
+def takePicture(imageName):
+    
+
+
+
+
+
+
+
 # make preview slightly see through so we can see errors
 # camera.start_preview(alpha=200)
 
