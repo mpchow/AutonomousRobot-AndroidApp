@@ -1,9 +1,50 @@
 #ForwardsButton {
-    width: 150px;
-    height: 200 px;
+    top: 10%;
     border: 0;
     cursor: pointer;
+    background-color: transparent;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 #ForwardsButton:hover {
-    background-image: 
+    position: relative;
+    top: -10px;
+}
+#LeftButton {
+    top: 50%;
+    border: 0;
+    cursor: pointer;
+    background-color: transparent;
+    display: block;
+    margin-left: 10%;
+}
+#LeftButton:hover {
+    position: relative;
+    left: -10px;
+}
+#RightButton {
+    top: 50%;
+    border: 0;
+    cursor: pointer;
+    background-color: transparent;
+    display: block;
+    margin-right: 10%;
+}
+#RightButton:hover {
+    position: relative;
+    right: -10px;
+}
+#BackwardsButton {
+    top: 60%;
+    border: 0;
+    cursor: pointer;
+    background-color: transparent;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#BackwardsButton:hover {
+    position: relative;
+    bottom: -10px;
 }
