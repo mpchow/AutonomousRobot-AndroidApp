@@ -1,7 +1,7 @@
 from picamera import PiCamera
 from time import sleep
-from adafruit_st7735r import ST7735R
-import adafruit_imageload
+# from adafruit_st7735r import ST7735R
+# import adafruit_imageload
 
 camera = PiCamera()
 
@@ -9,12 +9,21 @@ camera = PiCamera()
 # unable to see if using remote access like SSH or VNC
 camera.start_preview()
 sleep(5)                                                # must sleep for at least 2 seconds so can sense light levels
-camera.capture('image.bmp', resize=(128, 128))
-displayImg()
+camera.capture('/home/pi/Desktop/image.bmp', resize=(128, 128))
+# displayImg()
 camera.stop_preview()
 
+def takePicture(imageName):
+    
+
+
+
+
+
+
+
 # make preview slightly see through so we can see errors
-camera.start_preview(alpha=200)
+# camera.start_preview(alpha=200)
 
 # Display image on the LCD
 def displayImg(fileName):
