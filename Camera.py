@@ -28,3 +28,10 @@ def displayImg(fileName):
     group.append(tile_grid)
     # Show the group
     display.show(group)
+
+def record():
+    camera.start_preview()
+    camera.start_recording('/home/pi/Desktop/testvid.h264')
+    sleep(5)
+    camera.stop_recording()
+    camera.stop_preview()
