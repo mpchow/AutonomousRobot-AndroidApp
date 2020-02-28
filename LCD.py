@@ -1,51 +1,74 @@
-"""
-This test will initialize the display using displayio and draw a solid green
-background, a smaller purple rectangle, and some yellow text.
-"""
- 
+import digitalio
 import board
-import displayio
-import terminalio
-from adafruit_display_text import label
-from adafruit_st7735r import ST7735R
+from PIL import Image, ImageDraw
+import adafruit_rgb_display.ili9341 as ili9341
+import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
+import adafruit_rgb_display.hx8357 as hx8357        # pylint: disable=unused-import
+import adafruit_rgb_display.st7735 as st7735        # pylint: disable=unused-import
+import adafruit_rgb_display.ssd1351 as ssd1351      # pylint: disable=unused-import
+import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-import
  
-# Release any resources currently in use for the displays
-displayio.release_displays()
+# Configuration for CS and DC pins (these are PiTFT defaults):
+cs_pin = digitalio.DigitalInOut(board.CE0)
+dc_pin = digitalio.DigitalInOut(board.D25)
+reset_pin = digitalio.DigitalInOut(board.D24)
  
+# Config for display baudrate (default max is 24mhz):
+BAUDRATE = 24000000
+ 
+# Setup SPI bus using hardware SPI:
 spi = board.SPI()
-tft_cs = board.D5
-tft_dc = board.D6
  
-display_bus = displayio.FourWire(spi, command=tft_dc, chip_select=tft_cs, reset=board.D9)
+# pylint: disable=line-too-long
+# Create the display:
+#disp = st7789.ST7789(spi, rotation=90,                            # 2.0" ST7789
+#disp = st7789.ST7789(spi, height=240, y_offset=80, rotation=180,  # 1.3", 1.54" ST7789
+#disp = st7789.ST7789(spi, rotation=90, width=135, height=240, x_offset=53, y_offset=40, # 1.14" ST7789
+#disp = hx8357.HX8357(spi, rotation=180,                           # 3.5" HX8357
+#disp = st7735.ST7735R(spi, rotation=90,                           # 1.8" ST7735R
+#disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   # 1.44" ST7735R
+#disp = st7735.ST7735R(spi, rotation=90, bgr=True,                 # 0.96" MiniTFT ST7735R
+#disp = ssd1351.SSD1351(spi, rotation=180,                         # 1.5" SSD1351
+#disp = ssd1351.SSD1351(spi, height=96, y_offset=32, rotation=180, # 1.27" SSD1351
+#disp = ssd1331.SSD1331(spi, rotation=180,                         # 0.96" SSD1331
+disp = ili9341.ILI9341(spi, rotation=90,                           # 2.2", 2.4", 2.8", 3.2" ILI9341
+                       cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
+# pylint: enable=line-too-long
  
-display = ST7735R(display_bus, width=128, height=128, colstart=2, rowstart=1)
+# Create blank image for drawing.
+# Make sure to create image with mode 'RGB' for full color.
+if disp.rotation % 180 == 90:
+    height = disp.width   # we swap height/width to rotate it to landscape!
+    width = disp.height
+else:
+    width = disp.width   # we swap height/width to rotate it to landscape!
+    height = disp.height
+image = Image.new('RGB', (width, height))
  
-# Make the display context
-splash = displayio.Group(max_size=10)
-display.show(splash)
+# Get drawing object to draw on image.
+draw = ImageDraw.Draw(image)
  
-color_bitmap = displayio.Bitmap(128, 128, 1)
-color_palette = displayio.Palette(1)
-color_palette[0] = 0x00FF00 # Bright Green
+# Draw a black filled box to clear the image.
+draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
+disp.image(image)
  
-bg_sprite = displayio.TileGrid(color_bitmap,
-                               pixel_shader=color_palette,
-                               x=0, y=0)
-splash.append(bg_sprite)
+image = Image.open("blinka.jpg")
  
-# Draw a smaller inner rectangle
-inner_bitmap = displayio.Bitmap(108, 108, 1)
-inner_palette = displayio.Palette(1)
-inner_palette[0] = 0xAA0088 # Purple
-inner_sprite = displayio.TileGrid(inner_bitmap,
-                                  pixel_shader=inner_palette,
-                                  x=10, y=10)
-splash.append(inner_sprite)
+# Scale the image to the smaller screen dimension
+image_ratio = image.width / image.height
+screen_ratio = width / height
+if screen_ratio < image_ratio:
+    scaled_width = image.width * height // image.height
+    scaled_height = height
+else:
+    scaled_width = width
+    scaled_height = image.height * width // image.width
+image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
  
-# Draw a label
-text = "Hello World!"
-text_area = label.Label(terminalio.FONT, text=text, color=0xFFFF00, x=30, y=64)
-splash.append(text_area)
+# Crop and center the image
+x = scaled_width // 2 - width // 2
+y = scaled_height // 2 - height // 2
+image = image.crop((x, y, x + width, y + height))
  
-while True:
-    pass
+# Display image.
+disp.image(image)
