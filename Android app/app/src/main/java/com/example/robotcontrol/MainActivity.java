@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         final Button leftButton = (Button) findViewById(R.id.leftwards);
         final Button rightButton = (Button) findViewById(R.id.rightwards);
         robotCamera = findViewById(R.id.imageView);
+        robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
         forwardButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
