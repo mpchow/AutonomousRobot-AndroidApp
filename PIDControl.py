@@ -16,14 +16,16 @@ def controller():
     while True:
         opticalValue = GETFROMSENSORS()
         PIDVal = calculatePID(opticalValue, prevError)
+        kit.motor1.throttle = 0.75 +
+        kit.motor2.throttle = 0.75 +
 
 def calculatePID(opticalValue, prevError):
 
     error = calculateError(opticalValue)
-    P = error
-    I += error
-    D = error - prevError
+    integral += error
     prevError = error
+
+    return (Kp * error )+ (Kd * (error - prevError)) + (Ki * integral)
 
 
 
