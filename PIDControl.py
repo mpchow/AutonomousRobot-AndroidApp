@@ -53,7 +53,7 @@ class Error:
 
     def calculatePID(self):
         error = self.calculateError()
-        integral += error
-        pidValue = Kp * error + Kd * (error - prevError) + Ki * integral
-        prevError = error
+        self.integral += error
+        pidValue = self.Kp * error + self.Kd * (error - self.prevError) + self.Ki * self.integral
+        self.prevError = error
         return pidValue
