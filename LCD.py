@@ -9,10 +9,11 @@ import adafruit_rgb_display.st7735 as st7735        # pylint: disable=unused-imp
 import adafruit_rgb_display.ssd1351 as ssd1351      # pylint: disable=unused-import
 import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-import
 
-def writeText():
+#parameter is the text to write to board
+def writeText(text):
     # First define some constants to allow easy resizing of shapes.
     BORDER = 5
-    FONTSIZE = 24
+    FONTSIZE = 16
     # Configuration for CS and DC pins (these are PiTFT defaults):
     cs_pin = digitalio.DigitalInOut(board.CE0)
     dc_pin = digitalio.DigitalInOut(board.D25)
@@ -42,18 +43,17 @@ def writeText():
     draw = ImageDraw.Draw(image)
 
     # Draw a green filled box as the background
-    draw.rectangle((0, 0, width, height), fill=(0, 255, 0))
+    draw.rectangle((0, 0, width, height), fill=(170, 0, 136))
     disp.image(image)
 
-    # Draw a smaller inner purple rectangle
-    draw.rectangle((BORDER, BORDER, width - BORDER - 1, height - BORDER - 1),
-                   fill=(170, 0, 136))
+#    # Draw a smaller inner purple rectangle
+#    draw.rectangle((BORDER, BORDER, width - BORDER - 1, height - BORDER - 1),
+#                   fill=(170, 0, 136))
 
     # Load a TTF Font
     font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', FONTSIZE)
 
     # Draw Some Text
-    text = "Hello World!"
     (font_width, font_height) = font.getsize(text)
     draw.text((width//2 - font_width//2, height//2 - font_height//2),
           text, font=font, fill=(255, 255, 0))
@@ -61,6 +61,7 @@ def writeText():
     # Display image.
     disp.image(image)
 
+#parameter is the imageName to write to board
 def writeImages(imageName):
     # Configuration for CS and DC pins (these are PiTFT defaults):
     cs_pin = digitalio.DigitalInOut(board.CE0)
