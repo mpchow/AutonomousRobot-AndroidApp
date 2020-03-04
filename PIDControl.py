@@ -19,28 +19,23 @@ def controller():
         kit.motor1.throttle = 0.75 +
         kit.motor2.throttle = 0.75 +
 
-def calculatePID(prevError):
-
-    error = self.calculateError()
-    integral += error
-    prevError = error
-    return Kp * error + Kd * (error - prevError) + Ki * integral
-
 class Error:
     def __init__(self):
-        self.farLeft = 0
-        self.midLeft = 0
-        self.middle = 0
-        self.midRight = 0
-        self.farRight = 0
+        self.sensorVal = [0, 0, 0, 0, 0]
         self.error = 0
+        self.prevError = 0
+        self.integral = 0
+        self.Kp = 0
+        self.Kd = 0
+        self.Ki = 0
+        
     
     def calculateError(self):
-        errorTotal = (self.farLeft * 10000)
-        errorTotal += (self.midLeft * 1000)
-        errorTotal += (self.middle * 100)
-        errorTotal += (self.midRight * 10)
-        errorTotal += self.farRight
+        errorTotal = (self.sensorVal[0] * 10000)
+        errorTotal += (self.sensorVal[1] * 1000)
+        errorTotal += (self.sensorVal[2] * 100)
+        errorTotal += (self.sensorVal[3] * 10)
+        errorTotal += self.sensorVal[4]
 
         if (errorTotal == 1):
             self.error = 4
@@ -60,3 +55,10 @@ class Error:
             self.error = -3
         elif (errorTotal == 10000):
             self.error = -4
+
+    def calculatePID(self):
+        error = self.calculateError()
+        integral += error
+        pidValue = Kp * error + Kd * (error - prevError) + Ki * integral
+        prevError = error
+        return pidValue
