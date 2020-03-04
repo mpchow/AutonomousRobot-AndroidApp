@@ -16,6 +16,8 @@ def controller():
  
 class Error:
     def __init__(self):
+        # sensorVal[0] = far left, sensorVal[1] = mid left, sensorVal[2] = middle
+        # sensorVal[3] = mid right, sensorVal[4] = far right
         self.sensorVal = [0, 0, 0, 0, 0]
         self.error = 0
         self.prevError = 0
@@ -26,35 +28,37 @@ class Error:
         
     
     def calculateError(self):
-        #0 is the left sensor, 4 is the rightmost sensor from a topdown view
+        # 0th index is for left sensor, 4th is the rightmost sensor from a topdown view
+        # Shift array elements to create one sum
         errorTotal = (self.sensorVal[0] * 10000)
         errorTotal += (self.sensorVal[1] * 1000)
         errorTotal += (self.sensorVal[2] * 100)
         errorTotal += (self.sensorVal[3] * 10)
         errorTotal += self.sensorVal[4]
 
-        if (errorTotal == 1):
+        if (errorTotal == 1):           # far right sensor triggered
             self.error = 4
-        elif (errorTotal == 11):
+        elif (errorTotal == 11):        # far & mid right sensors triggered
             self.error = 3
-        elif (errorTotal == 10):
+        elif (errorTotal == 10):        # mid right sensor triggered
             self.error = 2
-        elif (errorTotal == 110):
+        elif (errorTotal == 110):       # middle & mid right sensors triggered
             self.error = 1
-        elif (errorTotal == 100):
+        elif (errorTotal == 100):       # middle sensor triggered
             self.error = 0
-        elif (errorTotal == 1100):
+        elif (errorTotal == 1100):      # middle & mid left sensors triggered
             self.error = -1
-        elif (errorTotal == 1000):
+        elif (errorTotal == 1000):      # mid left sensor triggered
             self.error = -2
-        elif (errorTotal == 11000):
+        elif (errorTotal == 11000):     # far & mid left sensors triggered
             self.error = -3
-        elif (errorTotal == 10000):
+        elif (errorTotal == 10000):     # far left sensor triggered
             self.error = -4
 
     def calculatePID(self):
-        self.calculateError()
+        # Calculates PID value based on new sensor inputs and past values (prevError, integral)
+        self.calculateError()           # adjust error values based on sensor readings
         self.integral += self.error
         pidValue = self.Kp * self.error + self.Kd * (self.error - self.prevError) + self.Ki * self.integral
-        self.prevError = self.error
+        self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
