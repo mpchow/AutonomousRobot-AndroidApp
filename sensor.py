@@ -4,6 +4,7 @@ from time import sleep
 import digitalio
 import board
 from PIL import Image, ImageDraw, ImageFont
+'''
 import adafruit_rgb_display.ili9341 as ili9341
 import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
 import adafruit_rgb_display.hx8357 as hx8357        # pylint: disable=unused-import
@@ -11,7 +12,7 @@ import adafruit_rgb_display.st7735 as st7735        # pylint: disable=unused-imp
 import adafruit_rgb_display.ssd1351 as ssd1351      # pylint: disable=unused-import
 import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-import
 
-# First define some constants to allow easy resizing of shapes.
+# First de fine some constants to allow easy resizing of shapes.
 BORDER = 5
 FONTSIZE = 24
 
@@ -54,51 +55,25 @@ draw.rectangle((BORDER, BORDER, width - BORDER - 1, height - BORDER - 1),
 
 # Load a TTF Font
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', FONTSIZE)
-
-
+'''
 GPIO.setmode(GPIO.BCM)
 
-left_sensor = 11
-right_sensor = 9
-forward_sensor = 7
+left_sensor = 6
+right_sensor = 13
+middle_sensor = 26
 
 GPIO.setup(left_sensor, GPIO.IN)
 GPIO.setup(right_sensor, GPIO.IN)
-GPIO.setup(forward_sensor, GPIO.IN)
+GPIO.setup(middle_sensor, GPIO.IN)
 
 try:
-	while True:
-		if not GPIO.input(left_sensor):
-			print("Robot is straying off to the right, move left captain!")
-			# Draw Some Text
-			text = "Move Left!"
-			(font_width, font_height) = font.getsize(text)
-			draw.text((width//2 - font_width//2, height//2 - font_height//2),
-          				text, font=font, fill=(255, 255, 0))
-
-			# Display image.
-			disp.image(image)
-
-		elif not GPIO.input(right_sensor):
-			print("Robot is straying off to the left, move right captain!")
-			text = "Move Right!"
-			(font_width, font_height) = font.getsize(text)
-			draw.text((width//2 - font_width//2, height//2 - font_height//2),
-          				text, font=font, fill=(255, 255, 0))
-
-			# Display image.
-			disp.image(image)
-		else:
-			print("Straight!")
-			print("Robot is straying off to the left, move right captain!")
-			text = "Move Right!"
-			(font_width, font_height) = font.getsize(text)
-			draw.text((width//2 - font_width//2, height//2 - font_height//2),
-          				text, font=font, fill=(255, 255, 0))
-
-			# Display image.
-			disp.image(image)
-
-		sleep(0.2)
-except:
+    while True:
+        left = GPIO.input(left_sensor)
+        right = GPIO.input(right_sensor)
+        middle = GPIO.input(middle_sensor)
+        print("Left Value: ", left)
+        print("Right Value: ", right)
+        print("Mid Value: ", middle)
+        sleep(2)
+except KeyboardInterrupt:
 	GPIO.cleanup()
