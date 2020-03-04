@@ -1,16 +1,20 @@
 from adafruit_motorkit import MotorKit
 
-kit = MotorKit()
+
 
 def controller():
-    opticalValue = [0, 0, 0, 0, 0]
+    #Instantiate the motorkit instance
+    kit = MotorKit()
+    #Initially start the motors at same speed so they are running straight
     kit.motor1.throttle = 0.75
     kit.motor2.throttle = 0.75
-    prevError = 0
+    #Instantiate the error class to calculate things for us
     error = Error()
+    #Loop for the feedback loop
     while True:
+        #Calculate the PID value
         PID = error.calculatePID()
-
+        #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
         kit.motor1.throttle = 0.75 + PID #Assuming this is the left motor 
         kit.motor2.throttle = 0.75 - PID #Assuming this is the right motor
  
