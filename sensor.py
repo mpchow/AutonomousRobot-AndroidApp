@@ -60,9 +60,11 @@ GPIO.setmode(GPIO.BCM)
 
 left_sensor = 11
 right_sensor = 9
+forward_sensor = 7
 
 GPIO.setup(left_sensor, GPIO.IN)
 GPIO.setup(right_sensor, GPIO.IN)
+GPIO.setup(forward_sensor, GPIO.IN)
 
 try:
 	while True:
@@ -96,7 +98,7 @@ try:
 
 			# Display image.
 			disp.image(image)
-			
+
 		sleep(0.2)
 except:
 	GPIO.cleanup()
