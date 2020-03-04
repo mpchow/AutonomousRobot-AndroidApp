@@ -9,23 +9,24 @@ def controller():
     prevError = 0
     error = Error()
     while True:
-        opticalValue = GETFROMSENSORS()
-        PIDVal = calculatePID(opticalValue, prevError)
-        kit.motor1.throttle = 0.75 +
-        kit.motor2.throttle = 0.75 +
+        PID = error.calculatePID()
 
+        kit.motor1.throttle = 0.75 + PID #Assuming this is the left motor 
+        kit.motor2.throttle = 0.75 - PID #Assuming this is the right motor
+ 
 class Error:
     def __init__(self):
         self.sensorVal = [0, 0, 0, 0, 0]
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0
+        self.Kp = 0.0625
         self.Kd = 0
         self.Ki = 0
         
     
     def calculateError(self):
+        #0 is the left sensor, 4 is the rightmost sensor from a topdown view
         errorTotal = (self.sensorVal[0] * 10000)
         errorTotal += (self.sensorVal[1] * 1000)
         errorTotal += (self.sensorVal[2] * 100)
@@ -52,8 +53,8 @@ class Error:
             self.error = -4
 
     def calculatePID(self):
-        error = self.calculateError()
-        self.integral += error
-        pidValue = self.Kp * error + self.Kd * (error - self.prevError) + self.Ki * self.integral
-        self.prevError = error
+        self.calculateError()
+        self.integral += self.error
+        pidValue = self.Kp * self.error + self.Kd * (self.error - self.prevError) + self.Ki * self.integral
+        self.prevError = self.error
         return pidValue
