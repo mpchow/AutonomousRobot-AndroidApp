@@ -12,7 +12,7 @@ sensor1 = 5
 sensor2 = 6
 sensor3 = 13
 sensor4 = 19
-sensor4 = 26
+sensor5 = 26
 
 # Setup GPIO inputs
 GPIO.setup(sensor1, GPIO.IN)
@@ -33,17 +33,9 @@ def getOptics():
 
 try:
     while True:
-		'''
-        left = GPIO.input(left_sensor)
-        right = GPIO.input(right_sensor)
-        middle = GPIO.input(middle_sensor)
-        print("Left Value: ", left)
-        print("Right Value: ", right)
-        print("Mid Value: ", middle)
-		'''
-		sensArr = getOptics()
-		for x in sensArr:
-			print(x)
+        sensArr = getOptics()
+        for x in sensArr:
+            print(x)
         sleep(2)
 except KeyboardInterrupt:
 	GPIO.cleanup()
