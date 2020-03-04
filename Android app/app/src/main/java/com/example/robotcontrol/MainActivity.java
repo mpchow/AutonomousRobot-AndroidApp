@@ -25,76 +25,80 @@ import java.net.Socket;
 
 public class MainActivity extends AppCompatActivity {
 
-    private Socket socket;
-    private BufferedInputStream in;
-    private PrintWriter out;
+    private Socket socket; //Create the socket instance
+    private BufferedInputStream in; //input stream instance
+    private PrintWriter out; //output stream instance
     private InetAddress address; //Put address of the raspberry pi here
     private int port; //Put the port number of the raspberry pi here
-    private ImageView robotCamera;
+    private ImageView robotCamera; //create the imageView instance
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        //Get the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-//
-//        FloatingActionButton fab = findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
 
+        //Get the forwardButton
         final Button forwardButton = (Button) findViewById(R.id.forward);
+        //Get the backwardButton
         final Button backwardButton = (Button) findViewById(R.id.backwards);
+        //Get the leftButton
         final Button leftButton = (Button) findViewById(R.id.leftwards);
+        //Get the rightbutton
         final Button rightButton = (Button) findViewById(R.id.rightwards);
+        //Instantiate the imageView
         robotCamera = findViewById(R.id.imageView);
+        //Set a default image
         robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
+        //Add an event listener for the forwardsButton to call moveForward onclick
         forwardButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 moveForward();
             }
         });
 
+        //Add an event listener for the backwardsButton to call moveBackward onclick
         backwardButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 moveBackward();
             }
         });
 
+        //Add an event listener for the leftButton to call turnLeft onclick
         leftButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 turnLeft();
             }
         });
 
-
+        //Add an event listener for the rightButton to call turnRight onclick
         rightButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 turnRight();
             }
         });
 
-
+        //Try to serve
         try {
             serve();
         }
         catch (Exception e) {
+            //If exception, print stack trace
             e.printStackTrace();
         }
 
 
     }
 
-
+    //Start the sever
     public void serve() throws IOException{
+        //Set the onscreen message to say that there is a good connection
         final TextView connectedStatus = (TextView) findViewById(R.id.textView);
 
+        //While loop for handling until we close sockets
         while (true) {
             try {
                 //Connect it to the specified port and ip address
@@ -107,12 +111,18 @@ public class MainActivity extends AppCompatActivity {
                 //If no exception, display a message so we know that it is connected
                 connectedStatus.setText("Connected");
 
+                //Start the mainFunction
                 mainFunctionality();
             } catch (Exception e) {
+                //If execption, print stack trace
                 e.printStackTrace();
+            //Once the try catch finishes
             } finally {
+                //Close the input stream
                 in.close();
+                //Close the output stream
                 out.close();
+                //Close the socket
                 socket.close();
             }
         }
@@ -120,41 +130,54 @@ public class MainActivity extends AppCompatActivity {
 
     //Start to listen and serve requests
     public void mainFunctionality() {
+        //create a bitmap factory instance
         BitmapFactory converter = new BitmapFactory();
+
+        //Continually update the photo
         while (true) {
+            //create a new bitmap
             Bitmap image = converter.decodeStream(in);
+            //set the image as the newly converted bitmap
             robotCamera.setImageBitmap(image);
         }
     }
 
+    //Send a request
     public void sendRequest(String movement) {
+        //Create a new JSONObject
         JSONObject request = new JSONObject();
+
+        //Try adding fields to the JSON
         try {
             request.put("Type", movement);
+            //Send the request out over the socket
             out.print(request);
+            //Flush the socket
             out.flush();
         }
         catch (Exception e) {
+            //If exception, print stack trace
             e.printStackTrace();
         }
     }
 
-    public void receiveResponse() {
-
-    }
-
+    //send a request to turn left
     public void turnLeft()  {
         sendRequest("Left");
     }
 
+    //send a request to turn right
     public void turnRight() {
         sendRequest("Right");
     }
 
+    //send a request to move forwards
     public void moveForward() {
         sendRequest("Forward");
     }
 
+
+    //send a request to move backwards
     public void moveBackward() {
         sendRequest("Backward");
     }
