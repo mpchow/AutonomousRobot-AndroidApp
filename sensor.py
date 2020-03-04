@@ -61,7 +61,10 @@ GPIO.setmode(GPIO.BCM)
 left_sensor = 6
 right_sensor = 13
 middle_sensor = 26
-
+sensor19 = 19
+sensor5 = 5
+GPIO.setup(sensor5, GPIO.IN)
+GPIO.setup(sensor19, GPIO.IN)
 GPIO.setup(left_sensor, GPIO.IN)
 GPIO.setup(right_sensor, GPIO.IN)
 GPIO.setup(middle_sensor, GPIO.IN)
@@ -71,6 +74,10 @@ try:
         left = GPIO.input(left_sensor)
         right = GPIO.input(right_sensor)
         middle = GPIO.input(middle_sensor)
+        midl = GPIO.input(sensor19)
+        midr = GPIO.input(sensor5)
+        print("MidR Value: ", midr)
+        print("MidL Value: ", midl)
         print("Left Value: ", left)
         print("Right Value: ", right)
         print("Mid Value: ", middle)
