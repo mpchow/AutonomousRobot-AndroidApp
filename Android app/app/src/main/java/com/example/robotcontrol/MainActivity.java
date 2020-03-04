@@ -39,6 +39,8 @@ public class MainActivity extends AppCompatActivity {
         //Get the toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        //Instantiate the port
+        port = 5000;
 
         //Get the forwardButton
         final Button forwardButton = (Button) findViewById(R.id.forward);
@@ -57,13 +59,6 @@ public class MainActivity extends AppCompatActivity {
         forwardButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 moveForward();
-            }
-        });
-
-        //Add an event listener for the backwardsButton to call moveBackward onclick
-        backwardButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                moveBackward();
             }
         });
 
@@ -174,12 +169,6 @@ public class MainActivity extends AppCompatActivity {
     //send a request to move forwards
     public void moveForward() {
         sendRequest("Forward");
-    }
-
-
-    //send a request to move backwards
-    public void moveBackward() {
-        sendRequest("Backward");
     }
 
 
