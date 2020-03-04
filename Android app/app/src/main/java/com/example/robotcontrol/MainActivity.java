@@ -13,7 +13,9 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.graphics.Bitmap;
 
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity {
     private InetAddress address; //Put address of the raspberry pi here
     private int port; //Put the port number of the raspberry pi here
     private ImageView robotCamera; //create the imageView instance
+    private Switch modeToggle;
+    private TextView modeStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +46,12 @@ public class MainActivity extends AppCompatActivity {
         //Instantiate the port
         port = 5000;
 
+        //Instantiate the mode toggle
+        modeToggle = (Switch) findViewById(R.id.modeToggle);
+        //Instantiate the mode status
+        modeStatus = (TextView) findViewById(R.id.ModeStatus);
         //Get the forwardButton
         final Button forwardButton = (Button) findViewById(R.id.forward);
-        //Get the backwardButton
-        final Button backwardButton = (Button) findViewById(R.id.backwards);
         //Get the leftButton
         final Button leftButton = (Button) findViewById(R.id.leftwards);
         //Get the rightbutton
@@ -73,6 +79,21 @@ public class MainActivity extends AppCompatActivity {
         rightButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 turnRight();
+            }
+        });
+
+        //Add an event listener for the toggle
+        modeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                //If the switch is on
+                if(isChecked) {
+                    modeStatus.setText("Mode:Remote Control");
+                }
+                else {
+                    modeStatus.setText("Mode:Autonomous");
+                }
+                ChangeMode(isChecked);
             }
         });
 
@@ -138,13 +159,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     //Send a request
-    public void sendRequest(String movement) {
+    public void sendRequest(String movement, String mode) {
         //Create a new JSONObject
         JSONObject request = new JSONObject();
 
         //Try adding fields to the JSON
         try {
             request.put("Type", movement);
+            request.put("Mode", mode);
             //Send the request out over the socket
             out.print(request);
             //Flush the socket
@@ -156,20 +178,37 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    //Tell the pi to change modes
+    public void ChangeMode(boolean mode) {
+        if(mode) {
+            sendRequest("NULL", "Remote");
+        }
+        else {
+            sendRequest("NULL", "Autonomous");
+        }
+    }
+
     //send a request to turn left
     public void turnLeft()  {
-        sendRequest("Left");
+        if(modeStatus.getText() == "Mode:Remote Control") {
+            sendRequest("Left", "Remote");
+        }
     }
 
     //send a request to turn right
     public void turnRight() {
-        sendRequest("Right");
+        if(modeStatus.getText() == "Mode:Remote Control") {
+            sendRequest("Right", "Remote");
+        }
     }
 
     //send a request to move forwards
     public void moveForward() {
-        sendRequest("Forward");
+        if(modeStatus.getText() == "Mode:Remote Control") {
+            sendRequest("Forward", "Remote");
+        }
     }
+
 
 
     @Override
