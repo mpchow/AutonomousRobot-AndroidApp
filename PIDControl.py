@@ -25,32 +25,37 @@ def calculatePID(opticalValue, prevError):
     D = error - prevError
     prevError = error
 
-
-
-def calculateError(opticalValue):
-    errorTotal = (opticalValue[0] * 10000)
-    errorTotal += (opticalValue[1] * 1000)
-    errorTotal += (opticalValue[2] * 100)
-    errorTotal += (opticalValue[3] * 10)
-    errorTotal += opticalValue[4]
-
-    if (errorTotal == 1):
-        error = 4
-    elif (errorTotal == 11):
-        error = 3
-    elif (errorTotal == 10):
-        error = 2
-    elif (errorTotal == 110):
-        error = 1
-    elif (errorTotal == 100):
-        error = 0
-    elif (errorTotal == 1100):
-        error = -1
-    elif (errorTotal == 1000):
-        error = -2
-    elif (errorTotal == 11000):
-        error = -3
-    elif (errorTotal == 10000):
-        error = -4
+class Error:
+    def __init__(self):
+        self.farLeft = 0
+        self.midLeft = 0
+        self.middle = 0
+        self.midRight = 0
+        self.farRight = 0
+        self.error = 0
     
-    return error
+    def calculateError(self):
+        errorTotal = (self.farLeft * 10000)
+        errorTotal += (self.midLeft * 1000)
+        errorTotal += (self.middle * 100)
+        errorTotal += (self.midRight * 10)
+        errorTotal += self.farRight
+
+        if (errorTotal == 1):
+            self.error = 4
+        elif (errorTotal == 11):
+            self.error = 3
+        elif (errorTotal == 10):
+            self.error = 2
+        elif (errorTotal == 110):
+            self.error = 1
+        elif (errorTotal == 100):
+            self.error = 0
+        elif (errorTotal == 1100):
+            self.error = -1
+        elif (errorTotal == 1000):
+            self.error = -2
+        elif (errorTotal == 11000):
+            self.error = -3
+        elif (errorTotal == 10000):
+            self.error = -4
