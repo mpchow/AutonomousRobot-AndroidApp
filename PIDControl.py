@@ -1,11 +1,6 @@
 from adafruit_motorkit import MotorKit
 
 kit = MotorKit()
-Kp = something
-Kd = something
-Ki = something
-error = 0
-prevError = 0
 
 def controller():
     opticalValue = [0, 0, 0, 0, 0]
