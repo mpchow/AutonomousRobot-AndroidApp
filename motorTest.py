@@ -1,6 +1,7 @@
 """Simple test for using adafruit_motorkit with a DC motor"""
 from time import sleep
 from adafruit_motorkit import MotorKit
+import PIDControl
 
 kit = MotorKit()
 
@@ -37,5 +38,11 @@ try:
         off()
         sleep(2)
 
+except KeyboardInterrupt:
+    off()
+
+#comment out if you want
+try:
+    PIDControl.controller()
 except KeyboardInterrupt:
     off()
