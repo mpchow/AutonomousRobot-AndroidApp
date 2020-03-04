@@ -1,9 +1,9 @@
 from adafruit_motorkit import MotorKit
 
 kit = MotorKit()
-P = 0
-I = 0
-D = 0
+Kp = something
+Kd = something
+Ki = something
 error = 0
 prevError = 0
 
@@ -12,50 +12,20 @@ def controller():
     kit.motor1.throttle = 0.75
     kit.motor2.throttle = 0.75
     prevError = 0
-
+    error = Error()
     while True:
         opticalValue = GETFROMSENSORS()
         PIDVal = calculatePID(opticalValue, prevError)
         kit.motor1.throttle = 0.75 +
         kit.motor2.throttle = 0.75 +
 
-def calculatePID(opticalValue, prevError):
+def calculatePID(prevError):
 
-    error = calculateError(opticalValue)
+    error = self.calculateError()
     integral += error
     prevError = error
+    return Kp * error + Kd * (error - prevError) + Ki * integral
 
-<<<<<<< HEAD
-    return (Kp * error )+ (Kd * (error - prevError)) + (Ki * integral)
-
-
-
-def calculateError(opticalValue):
-    errorTotal = (opticalValue[0] * 10000)
-    errorTotal += (opticalValue[1] * 1000)
-    errorTotal += (opticalValue[2] * 100)
-    errorTotal += (opticalValue[3] * 10)
-    errorTotal += opticalValue[4]
-
-    if (errorTotal == 1):
-        error = 4
-    elif (errorTotal == 11):
-        error = 3
-    elif (errorTotal == 10):
-        error = 2
-    elif (errorTotal == 110):
-        error = 1
-    elif (errorTotal == 100):
-        error = 0
-    elif (errorTotal == 1100):
-        error = -1
-    elif (errorTotal == 1000):
-        error = -2
-    elif (errorTotal == 11000):
-        error = -3
-    elif (errorTotal == 10000):
-        error = -4
-=======
 class Error:
     def __init__(self):
         self.farLeft = 0
@@ -64,7 +34,6 @@ class Error:
         self.midRight = 0
         self.farRight = 0
         self.error = 0
->>>>>>> 9774f0b8b26db710a4ef88373dc32262d9ba8704
     
     def calculateError(self):
         errorTotal = (self.farLeft * 10000)
