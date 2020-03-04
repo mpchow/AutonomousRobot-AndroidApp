@@ -1,5 +1,6 @@
 import digitalio
 import board
+import time
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.ili9341 as ili9341
 import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
@@ -60,10 +61,7 @@ def writeText():
     # Display image.
     disp.image(image)
 
-def writeImages():
-    # First define some constants to allow easy resizing of shapes.
-    BORDER = 5
-    FONTSIZE = 24
+def writeImages(imageName):
     # Configuration for CS and DC pins (these are PiTFT defaults):
     cs_pin = digitalio.DigitalInOut(board.CE0)
     dc_pin = digitalio.DigitalInOut(board.D25)
@@ -92,10 +90,10 @@ def writeImages():
     draw = ImageDraw.Draw(image)
  
     # Draw a black filled box to clear the image.
-    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
-    disp.image(image)
+    draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0)) # create a rectangle that is blank to put on the LCD
+    disp.image(image) # put the image on the LCD
     
-    image = Image.open("blinka.jpg")
+    image = Image.open(imageName) # open the image given by the string imageName
     
     # Scale the image to the smaller screen dimension
     image_ratio = image.width / image.height
@@ -115,3 +113,7 @@ def writeImages():
  
     # Display image.
     disp.image(image)
+
+writeText()
+time.sleep(5)
+writeImages("blinka.jpg")
