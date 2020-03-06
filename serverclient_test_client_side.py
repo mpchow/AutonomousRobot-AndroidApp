@@ -6,7 +6,7 @@ import picamera
 
 # Connect a client socket to my_server:8000 (change my_server to the
 # hostname of your server)
-client_socket = socket.socket()
+client_socket = socket.socket(socket.AF_INET,socket.SOCK_STREAM)
 client_socket.bind((socket.gethostname(), 5000))
 
 # Make a file-like object out of the connection
@@ -27,17 +27,14 @@ try:
         for foo in camera.capture_continuous(stream, 'jpeg'):
             # Write the length of the capture to the stream and flush to
             # ensure it actually gets sent
-            try:
-                connection.write(struct.pack('<L', stream.tell()))
-                connection.flush()
-                # Rewind the stream and send the image data over the wire
-                stream.seek(0)
-                connection.write(stream.read())
-            except BrokenPipeError:
-                pass
+            connection.write(struct.pack('<L', stream.tell()))
+            connection.flush()
+            # Rewind the stream and send the image data over the wire
+            stream.seek(0)
+            connection.write(stream.read())
             # If we've been capturing for more than 30 seconds, quit
-            #if time.time() - start > 30:
-                #break
+            if time.time() - start > 30:
+                break
             # Reset the stream for the next capture
             stream.seek(0)
             stream.truncate()
