@@ -92,14 +92,13 @@ def animation():
     elif (count == 2):
         writeImages("secondGear.jpg")
     else:
-        writeImages("thirdImg.jpg")
-        count = 0
+        writeImages("thirdGear.jpg")
+        count = 0   # return to first image
 
 
 def parseJson(inputStream):
     data = json.load(inputStream)
-        writeImages("thirdGear.jpg")
-        count = 0   # return to first image
+        
         
 def controller():
     global count
