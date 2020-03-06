@@ -120,7 +120,7 @@ def controller():
             else:
                 count += 1
                 animation()
-                
+
             #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
             kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
             kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
@@ -185,5 +185,7 @@ class Error:
         pidValue = self.Kp * self.error + self.Kd * (self.error - self.prevError) + self.Ki * self.integral
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
+
+
 
 controller()
