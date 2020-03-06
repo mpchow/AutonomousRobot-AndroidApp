@@ -100,7 +100,7 @@ def controller():
     #Initially start the motors at same speed so they are running straight
     kit.motor1.throttle = 0.25
     kit.motor2.throttle = 0.25
-    #Instantiate the error class to calculate things for us
+    #Instantiate the error class for calculations
     error = Error()
     #Loop for the feedback loop
     try:
@@ -138,6 +138,7 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
+        # Kp, Kd, Ki determined through experimentation
         self.Kp = 0.0005
         self.Kd = 0
         self.Ki = 0
@@ -172,6 +173,7 @@ class Error:
             self.error = -4
 
     def getOptics(self):
+        # Read sensor values and input them into sensorVal array
         sens1 = GPIO.input(sensor1)
         sens2 = GPIO.input(sensor2)
         sens3 = GPIO.input(sensor3)
@@ -186,7 +188,5 @@ class Error:
         pidValue = self.Kp * self.error + self.Kd * (self.error - self.prevError) + self.Ki * self.integral
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
-
-
 
 controller()
