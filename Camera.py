@@ -12,17 +12,15 @@ camera = PiCamera()
 
 stream = picamera.PiCameraCircularIO(camera, splitter_port=2)
 
-# opens camera preview 
+# opens camera preview
 # unable to see if using remote access like SSH or VNC
 camera.start_preview()
-sleep(5)                                                # must sleep for at least 2 seconds so can sense light levels
+sleep(5)  # must sleep for at least 2 seconds so can sense light levels
 camera.capture('/home/pi/Desktop/image.bmp', resize=(128, 128))
 # displayImg()
 camera.stop_preview()
 
 def takePicture(imageName):
-
-
 # make preview slightly see through so we can see errors
 # camera.start_preview(alpha=200)
 
@@ -125,6 +123,3 @@ try:
 finally:
     connection.close()
     client_socket.close()
-
-
-
