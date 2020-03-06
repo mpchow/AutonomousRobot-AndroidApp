@@ -96,8 +96,14 @@ def animation():
         count = 0   # return to first image
 
 
-def parseJson(inputStream):
-    data = json.load(inputStream)
+def parseJson(byteStream):
+    # Decode UTF-8 bytes to unicode
+    # To make valid JSON, replace single quotes with double quotes
+    jsonStream = byteStream.decode('utf8').replace("'", '"')
+    # Load JSON to Python list
+    jsonList = json.load(jsonStream)
+    parsedJson = json.dumps(jsonList, indent=4, sort_keys=True)
+    print(parsedJson)
         
         
 def controller():
