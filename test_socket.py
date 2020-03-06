@@ -37,7 +37,7 @@ class SplitFrames(object):
                 self.stream.seek(0)
         self.stream.write(buf)
 
-client_socket = socket.socket()
+client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 client_socket.bind((socket.gethostname(), 5000))
 connection = client_socket.makefile('wb')
 try:
@@ -45,7 +45,7 @@ try:
     with picamera.PiCamera(resolution='VGA', framerate=30) as camera:
         time.sleep(2)
         start = time.time()
-        camera.start_recording(output, format='mjpeg')
+        camera.start_recording(output, format='bmp')
         camera.wait_recording(30)
         camera.stop_recording()
         # Write the terminating 0-length to the connection to let the
