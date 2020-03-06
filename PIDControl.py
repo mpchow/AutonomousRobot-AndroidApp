@@ -1,5 +1,24 @@
+from RPi import GPIO
 from adafruit_motorkit import MotorKit
+import digitalio
+import board
+from PIL import Image, ImageDraw, ImageFont
 
+GPIO.setmode(GPIO.BCM)
+
+# Assign sensor pins
+sensor1 = 5
+sensor2 = 6
+sensor3 = 13
+sensor4 = 19
+sensor5 = 26
+
+# Setup GPIO inputs
+GPIO.setup(sensor1, GPIO.IN)
+GPIO.setup(sensor2, GPIO.IN)
+GPIO.setup(sensor3, GPIO.IN)
+GPIO.setup(sensor4, GPIO.IN)
+GPIO.setup(sensor5, GPIO.IN)
 
 
 def controller():
@@ -11,13 +30,18 @@ def controller():
     #Instantiate the error class to calculate things for us
     error = Error()
     #Loop for the feedback loop
-    while True:
-        #Calculate the PID value
-        PID = error.calculatePID()
-        #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-        kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor 
-        kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
- 
+    try:
+        while True:
+            #Calculate the PID value
+            PID = error.calculatePID()
+            #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+            kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
+
+    except KeyboardInterrupt:
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
+
 class Error:
     def __init__(self):
         # sensorVal[0] = far left, sensorVal[1] = mid left, sensorVal[2] = middle
@@ -29,8 +53,8 @@ class Error:
         self.Kp = 0.0325
         self.Kd = 0
         self.Ki = 0
-        
-    
+
+
     def calculateError(self):
         # 0th index is for left sensor, 4th is the rightmost sensor from a topdown view
         # Shift array elements to create one sum
@@ -59,6 +83,15 @@ class Error:
         elif (errorTotal == 10000):     # far left sensor triggered
             self.error = -4
 
+    def getOptics():
+        global error
+        sens1 = GPIO.input(sensor1)
+        sens2 = GPIO.input(sensor2)
+        sens3 = GPIO.input(sensor3)
+        sens4 = GPIO.input(sensor4)
+        sens5 = GPIO.input(sensor5)
+        self.sensorVal = [sens1, sens2, sens3, sens4, sens5]
+
     def calculatePID(self):
         # Calculates PID value based on new sensor inputs and past values (prevError, integral)
         self.calculateError()           # adjust error values based on sensor readings
@@ -66,3 +99,5 @@ class Error:
         pidValue = self.Kp * self.error + self.Kd * (self.error - self.prevError) + self.Ki * self.integral
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
+
+controller()
