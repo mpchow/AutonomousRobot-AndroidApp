@@ -3,15 +3,16 @@ from adafruit_motorkit import MotorKit
 import digitalio
 import board
 from PIL import Image, ImageDraw, ImageFont
+import time
 
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
-sensor1 = 5
-sensor2 = 6
+sensor1 = 26
+sensor2 = 19
 sensor3 = 13
-sensor4 = 19
-sensor5 = 26
+sensor4 = 6
+sensor5 = 5
 
 # Setup GPIO inputs
 GPIO.setup(sensor1, GPIO.IN)
@@ -25,8 +26,8 @@ def controller():
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
-    kit.motor1.throttle = 0.25
-    kit.motor2.throttle = 0.25
+    kit.motor1.throttle = 0.20
+    kit.motor2.throttle = 0.20
     #Instantiate the error class to calculate things for us
     error = Error()
     #Loop for the feedback loop
@@ -35,9 +36,10 @@ def controller():
             #Calculate the PID value
             error.getOptics()
             PID = error.calculatePID()
+            print(PID)
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
+            kit.motor1.throttle = 0.20 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.20 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -51,7 +53,7 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.0005
+        self.Kp = 0.05
         self.Kd = 0
         self.Ki = 0
 
@@ -91,6 +93,8 @@ class Error:
         sens4 = GPIO.input(sensor4)
         sens5 = GPIO.input(sensor5)
         self.sensorVal = [sens1, sens2, sens3, sens4, sens5]
+        for x in self.sensorVal:
+            print(x)
 
     def calculatePID(self):
         # Calculates PID value based on new sensor inputs and past values (prevError, integral)
