@@ -84,16 +84,15 @@ def writeImages(imageName):
 
 def animation():
     global count
+    # show animation by iterating through 3 similar images
     if (count == 1):
-        writeImages("firstImg.jpg")
+        writeImages("firstGear.jpg")
     elif (count == 2):
-        writeImages("secondImg.jpg")
+        writeImages("secondGear.jpg")
     else:
-        writeImages("thirdImg.jpg")
-        count = 0
+        writeImages("thirdGear.jpg")
+        count = 0   # return to first image
         
-
-
 def controller():
     global count
     #Instantiate the motorkit instance
@@ -110,13 +109,15 @@ def controller():
             error.getOptics()
             PID = error.calculatePID()
 
-            # If PID is negative, robot turn right
+            # If PID is less than threshold, robot turn right
             if (PID < -28):
-                writeImages("leftArrow.jpg")
-
-            elif(PID > 28):
                 writeImages("rightArrow.jpg")
+
+            # If PID greater than threshold, robot turn left
+            elif(PID > 28):
+                writeImages("leftArrow.jpg")
             
+            # If robot going straight or performing negligble turns, play animation
             else:
                 count += 1
                 animation()
