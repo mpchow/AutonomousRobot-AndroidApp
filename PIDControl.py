@@ -6,8 +6,8 @@ def controller():
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
-    kit.motor1.throttle = 0.75
-    kit.motor2.throttle = 0.75
+    kit.motor1.throttle = 0.30
+    kit.motor2.throttle = 0.30
     #Instantiate the error class to calculate things for us
     error = Error()
     #Loop for the feedback loop
@@ -15,8 +15,8 @@ def controller():
         #Calculate the PID value
         PID = error.calculatePID()
         #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-        kit.motor1.throttle = 0.75 + PID #Assuming this is the left motor 
-        kit.motor2.throttle = 0.75 - PID #Assuming this is the right motor
+        kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor 
+        kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
  
 class Error:
     def __init__(self):
@@ -26,7 +26,7 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.0625
+        self.Kp = 0.0325
         self.Kd = 0
         self.Ki = 0
         
