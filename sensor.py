@@ -35,8 +35,8 @@ class Error:
         self.Kp = 0.0625
         self.Kd = 0
         self.Ki = 0
-        
-    
+
+
     def calculateError(self):
         # 0th index is for left sensor, 4th is the rightmost sensor from a topdown view
         # Shift array elements to create one sum
@@ -81,14 +81,14 @@ def controller():
     kit.motor1.throttle = 0.75
     kit.motor2.throttle = 0.75
     #Instantiate the error class to calculate things for us
-    
+
     #Loop for the feedback loop
     while True:
         #Calculate the PID value
         PID = errorObj.calculatePID()
         #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-        kit.motor1.throttle = 0.75 + PID 
-        kit.motor2.throttle = 0.75 - PID 
+        kit.motor1.throttle = 0.75 + PID
+        kit.motor2.throttle = 0.75 - PID
 
 # Function to get optical sensor outputs, store in array and returnz
 def getOptics():
