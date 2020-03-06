@@ -10,6 +10,8 @@ import adafruit_rgb_display.st7735 as st7735        # pylint: disable=unused-imp
 import adafruit_rgb_display.ssd1351 as ssd1351      # pylint: disable=unused-import
 import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-import
 
+import json
+
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
@@ -91,6 +93,10 @@ def animation():
     else:
         writeImages("thirdImg.jpg")
         count = 0
+
+
+def parseJson(inputStream):
+    data = json.load(inputStream)
         
 
 
