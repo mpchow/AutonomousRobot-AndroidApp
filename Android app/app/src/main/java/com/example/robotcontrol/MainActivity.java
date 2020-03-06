@@ -174,8 +174,7 @@ public class MainActivity extends AppCompatActivity {
         //Try adding fields to the JSON
         try {
             request.put("Type", movement);
-            request.put(s", mode);
-                    
+            request.put("Mode", mode);
             //Send the request out over the socket
             out.print(request);
             //Flush the socket
@@ -186,7 +185,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    {
+        "Type" : "",
+        "Mode"
+    }
     //Tell the pi to change modes
     public void ChangeMode(boolean mode) {
         if(mode) {
