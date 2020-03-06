@@ -25,18 +25,19 @@ def controller():
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
-    kit.motor1.throttle = 0.30
-    kit.motor2.throttle = 0.30
+    kit.motor1.throttle = 0.25
+    kit.motor2.throttle = 0.25
     #Instantiate the error class to calculate things for us
     error = Error()
     #Loop for the feedback loop
     try:
         while True:
             #Calculate the PID value
+            error.getOptics()
             PID = error.calculatePID()
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
+            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -50,7 +51,7 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.0325
+        self.Kp = 0.0005
         self.Kd = 0
         self.Ki = 0
 
@@ -83,8 +84,7 @@ class Error:
         elif (errorTotal == 10000):     # far left sensor triggered
             self.error = -4
 
-    def getOptics():
-        global error
+    def getOptics(self):
         sens1 = GPIO.input(sensor1)
         sens2 = GPIO.input(sensor2)
         sens3 = GPIO.input(sensor3)
