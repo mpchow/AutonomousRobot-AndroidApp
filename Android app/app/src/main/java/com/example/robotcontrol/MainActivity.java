@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //Instantiate the port
         port = 5000;
+
+        try {
+            address = InetAddress.getByName("137.82.226.227");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         //Instantiate the mode toggle
         modeToggle = (Switch) findViewById(R.id.modeToggle);
@@ -98,15 +105,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Try to serve
-        try {
-            serve();
-        }
-        catch (Exception e) {
-            //If exception, print stack trace
-            e.printStackTrace();
-        }
-
-
+//        while(true) {
+            try {
+                serve();
+            } catch (Exception e) {
+                //If exception, print stack trace
+                e.printStackTrace();
+            }
+            final TextView connectedStatus = (TextView) findViewById(R.id.textView);
+            connectedStatus.setText("Not Connected");
+//        }
     }
 
     //Start the sever
@@ -166,7 +174,8 @@ public class MainActivity extends AppCompatActivity {
         //Try adding fields to the JSON
         try {
             request.put("Type", movement);
-            request.put("Mode", mode);
+            request.put(s", mode);
+                    
             //Send the request out over the socket
             out.print(request);
             //Flush the socket
