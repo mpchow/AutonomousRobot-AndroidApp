@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import java.io.*;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -45,6 +46,12 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         //Instantiate the port
         port = 5000;
+
+        try {
+            address = InetAddress.getByName("137.82.226.227");
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
 
         //Instantiate the mode toggle
         modeToggle = (Switch) findViewById(R.id.modeToggle);
@@ -98,15 +105,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Try to serve
-        try {
-            serve();
-        }
-        catch (Exception e) {
-            //If exception, print stack trace
-            e.printStackTrace();
-        }
-
-
+//        while(true) {
+            try {
+                serve();
+            } catch (Exception e) {
+                //If exception, print stack trace
+                e.printStackTrace();
+            }
+            final TextView connectedStatus = (TextView) findViewById(R.id.textView);
+//            connectedStatus.setText("Not Connected");
+//        }
     }
 
     //Start the sever
@@ -177,7 +185,10 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-
+    {
+        "Type" : "",
+        "Mode"
+    }
     //Tell the pi to change modes
     public void ChangeMode(boolean mode) {
         if(mode) {
