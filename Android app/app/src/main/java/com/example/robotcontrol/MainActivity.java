@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
             final TextView connectedStatus = (TextView) findViewById(R.id.textView);
-            connectedStatus.setText("Not Connected");
+//            connectedStatus.setText("Not Connected");
 //        }
     }
 
