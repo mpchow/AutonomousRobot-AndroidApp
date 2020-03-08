@@ -30,15 +30,14 @@ def controller():
             #Calculate the PID value
             error.getOptics()
             PID = error.calculatePID()
-            if (error.count == 20):
+            if (error.count == 22):
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
-                print("Stop")
                 break
             time.sleep(0.05)
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.32 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.32 - PID #Assuming this is the right motor
+            kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
