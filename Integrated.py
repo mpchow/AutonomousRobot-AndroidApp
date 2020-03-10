@@ -15,18 +15,14 @@ import json
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
-sensor1 = 5
-sensor2 = 6
-sensor3 = 13
-sensor4 = 19
-sensor5 = 26
+sensor1 = 13
+sensor2 = 19
+sensor3 = 26
 
 # Setup GPIO inputs
 GPIO.setup(sensor1, GPIO.IN)
 GPIO.setup(sensor2, GPIO.IN)
 GPIO.setup(sensor3, GPIO.IN)
-GPIO.setup(sensor4, GPIO.IN)
-GPIO.setup(sensor5, GPIO.IN)
 
 count = 0
 
