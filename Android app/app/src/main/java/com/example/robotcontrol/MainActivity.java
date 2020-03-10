@@ -9,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import android.os.StrictMode;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -22,9 +23,10 @@ import android.graphics.Bitmap;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
+import java.net.*;
+//import java.net.InetAddress;
+//import java.net.Socket;
+//import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -41,17 +43,28 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        //Get the toolbar
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         //Instantiate the port
-        port = 5000;
+        port = 5003;
+
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+
+        StrictMode.setThreadPolicy(policy);
 
         try {
-            address = InetAddress.getByName("137.82.226.227");
+            //address = InetAddress.getByName("137.82.226.227");
+            address = InetAddress.getByName("137.82.226.222");
+//            byte[] addr = new byte[]{(byte) 137, 82, (byte) 226, (byte) 222};
+//           address = InetAddress.getByAddress(addr);
+
+
+//            socket = new Socket(address, port);
+
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
+//        catch (IOException e) {
+//            e.printStackTrace();
+//        }
 
         //Instantiate the mode toggle
         modeToggle = (Switch) findViewById(R.id.modeToggle);
@@ -127,6 +140,7 @@ public class MainActivity extends AppCompatActivity {
             try {
                 //Connect it to the specified port and ip address
                 socket = new Socket(address, port);
+                System.out.println("CONNECTED");
                 //Setup the input and output streams
                 in = new BufferedInputStream(socket.getInputStream());
 //                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -138,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
                 //Start the mainFunction
                 mainFunctionality();
             } catch (Exception e) {
+                System.out.println("Not connected");
                 //If execption, print stack trace
                 e.printStackTrace();
             //Once the try catch finishes
@@ -185,10 +200,7 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
     }
-    {
-        "Type" : "",
-        "Mode"
-    }
+
     //Tell the pi to change modes
     public void ChangeMode(boolean mode) {
         if(mode) {

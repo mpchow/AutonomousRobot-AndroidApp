@@ -5,10 +5,10 @@ HOST = ''
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    s.bind((HOST, PORT))
+    s.bind((socket.gethostname(), PORT))
+    print(socket.gethostname())
     s.listen()
-    print("I HATE EverYTHING")
-    conn, addr = s.accept()
-    print("VONNNRVFSVFS")
+    (conn, addr) = s.accept()
+    print("Connected")
     with conn:
         print('Connected by', addr)
