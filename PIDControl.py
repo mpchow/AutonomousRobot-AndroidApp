@@ -7,9 +7,9 @@ import time
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
-sensor1 = 13
+sensor1 = 26
 sensor2 = 19
-sensor3 = 26
+sensor3 = 13
 # Setup GPIO inputs
 GPIO.setup(sensor1, GPIO.IN)
 GPIO.setup(sensor2, GPIO.IN)
@@ -36,8 +36,8 @@ def controller():
                 break
             time.sleep(0.05)
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
+            kit.motor1.throttle = 0.27 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.27 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -50,7 +50,7 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.055
+        self.Kp = 0.07
         self.Kd = 0.13
         self.Ki = 0
         self.count = 0

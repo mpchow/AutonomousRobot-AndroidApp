@@ -1,5 +1,6 @@
 from RPi import GPIO
 from adafruit_motorkit import MotorKit
+import time
 import digitalio
 import board
 from PIL import Image, ImageDraw, ImageFont
@@ -15,9 +16,9 @@ import json
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
-sensor1 = 13
+sensor1 = 26
 sensor2 = 19
-sensor3 = 26
+sensor3 = 13
 
 # Setup GPIO inputs
 GPIO.setup(sensor1, GPIO.IN)
@@ -25,23 +26,23 @@ GPIO.setup(sensor2, GPIO.IN)
 GPIO.setup(sensor3, GPIO.IN)
 
 count = 0
+prevName = "left"
+# Configuration for CS and DC pins (these are PiTFT defaults):
+cs_pin = digitalio.DigitalInOut(board.CE0)
+dc_pin = digitalio.DigitalInOut(board.D25)
+reset_pin = digitalio.DigitalInOut(board.D24)
+
+# Config for display baudrate (default max is 24mhz):
+BAUDRATE = 24000000
+
+# Setup SPI bus using hardware SPI:
+spi = board.SPI()
+# 1.44" ST7735R
+disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
 
 #parameter is the imageName to write to board
 def writeImages(imageName):
-    # Configuration for CS and DC pins (these are PiTFT defaults):
-    cs_pin = digitalio.DigitalInOut(board.CE0)
-    dc_pin = digitalio.DigitalInOut(board.D25)
-    reset_pin = digitalio.DigitalInOut(board.D24)
-
-    # Config for display baudrate (default max is 24mhz):
-    BAUDRATE = 24000000
-
-    # Setup SPI bus using hardware SPI:
-    spi = board.SPI()
-    disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   # 1.44" ST7735R
-                           cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
     # pylint: enable=line-too-long
-
     # Create blank image for drawing.
     # Make sure to create image with mode 'RGB' for full color.
     if disp.rotation % 180 == 90:
@@ -51,16 +52,16 @@ def writeImages(imageName):
         width = disp.width   # we swap height/width to rotate it to landscape!
         height = disp.height
     image = Image.new('RGB', (width, height))
- 
+
     # Get drawing object to draw on image.
     draw = ImageDraw.Draw(image)
- 
+
     # Draw a black filled box to clear the image.
     draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0)) # create a rectangle that is blank to put on the LCD
     disp.image(image) # put the image on the LCD
-    
+
     image = Image.open(imageName) # open the image given by the string imageName
-    
+
     # Scale the image to the smaller screen dimension
     image_ratio = image.width / image.height
     screen_ratio = width / height
@@ -71,12 +72,12 @@ def writeImages(imageName):
         scaled_width = width
         scaled_height = image.height * width // image.width
     image = image.resize((scaled_width, scaled_height), Image.BICUBIC)
- 
+
     # Crop and center the image
     x = scaled_width // 2 - width // 2
     y = scaled_height // 2 - height // 2
     image = image.crop((x, y, x + width, y + height))
- 
+
     # Display image.
     disp.image(image)
 
@@ -101,6 +102,7 @@ def parseJson(byteStream):
     print(parsedJson)
 
 def controller():
+    global prevName
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
@@ -114,30 +116,26 @@ def controller():
             #Calculate the PID value
             error.getOptics()
             PID = error.calculatePID()
-            
             # If PID is less than threshold, robot turn right
-            if (PID < -28):
+            if (PID < 0 and prevName is "left"):
                 # need to change the values so the right image is played
                 writeImages("rightArrow.jpg")
+                prevName = "right"
 
             # If PID greater than threshold, robot turn left
-            elif(PID > 28):
+            elif(PID > 0 and prevName is "right"):
                 # need to change the values so the right image is played
                 writeImages("leftArrow.jpg")
-            
-            # If robot going straight or performing negligble turns, play animation
-            else:
-                count += 1
-                animation()
+                prevName = "left"
 
-            if (error.count == 22):
+            if (error.count == 25):
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
                 break
             time.sleep(0.05)
-            #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.30 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.30 - PID #Assuming this is the right motor
+            #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0

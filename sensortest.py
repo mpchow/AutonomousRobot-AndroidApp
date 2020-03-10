@@ -9,9 +9,9 @@ from adafruit_motorkit import MotorKit
 GPIO.setmode(GPIO.BCM)
 
 # Assign sensor pins
-sensor1 = 13
+sensor1 = 26
 sensor2 = 19
-sensor3 = 26
+sensor3 = 13
 
 GPIO.setup(sensor1, GPIO.IN)
 GPIO.setup(sensor2, GPIO.IN)
