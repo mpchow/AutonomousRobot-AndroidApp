@@ -25,8 +25,6 @@ GPIO.setup(sensor1, GPIO.IN)
 GPIO.setup(sensor2, GPIO.IN)
 GPIO.setup(sensor3, GPIO.IN)
 
-count = 0
-prevName = "left"
 # Configuration for CS and DC pins (these are PiTFT defaults):
 cs_pin = digitalio.DigitalInOut(board.CE0)
 dc_pin = digitalio.DigitalInOut(board.D25)
@@ -84,13 +82,12 @@ def writeImages(imageName):
 def animation():
     global count
     # show animation by iterating through 3 similar images
-    if (count == 1):
+    if (count == 0):
         writeImages("firstGear.jpg")
-    elif (count == 2):
+    elif (count == 50):
         writeImages("secondGear.jpg")
     else:
         writeImages("thirdGear.jpg")
-        count = 0   # return to first image
 
 def parseJson(byteStream):
     # Decode UTF-8 bytes to unicode
@@ -102,7 +99,7 @@ def parseJson(byteStream):
     print(parsedJson)
 
 def controller():
-    global prevName
+
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
@@ -116,26 +113,26 @@ def controller():
             #Calculate the PID value
             error.getOptics()
             PID = error.calculatePID()
+            print(PID)
             # If PID is less than threshold, robot turn right
-            if (PID < 0 and prevName is "left"):
+            if (PID < -0.25):
                 # need to change the values so the right image is played
-                writeImages("rightArrow.jpg")
-                prevName = "right"
+                writeImages("firstGear.jpg")
 
             # If PID greater than threshold, robot turn left
-            elif(PID > 0 and prevName is "right"):
+            elif(PID > 0.25):
                 # need to change the values so the right image is played
-                writeImages("leftArrow.jpg")
-                prevName = "left"
+                writeImages("secondGear.jpg")
 
-            if (error.count == 25):
+
+            if (error.count == 35):
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
                 break
             time.sleep(0.05)
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
+            kit.motor1.throttle = 0.27 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.27 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -163,7 +160,7 @@ class Error:
 
         if (errorTotal == 1):           # right sensor triggered
             self.count = 0
-            self.error = -2
+            self.error = -1.75
         elif (errorTotal == 11):        # middle and right sensors triggered
             self.count = 0
             self.error = -1
@@ -175,7 +172,7 @@ class Error:
             self.error = 1
         elif (errorTotal == 100):       # left sensor triggered
             self.count = 0
-            self.error = 2
+            self.error = 1.75
         elif (errorTotal == 111):       # all sensors triggered, most likely crossover
             self.count = 0
             self.error = 0
