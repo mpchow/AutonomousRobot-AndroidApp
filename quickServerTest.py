@@ -1,6 +1,7 @@
 import socket
+import json
 
-PORT = 5008       # Port to listen on (non-privileged ports are > 1023)
+PORT = 5016       # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 def parseJson(byteStream):
@@ -8,9 +9,16 @@ def parseJson(byteStream):
     # To make valid JSON, replace single quotes with double quotes
     jsonStream = byteStream.decode('utf8').replace("'", '"')
     # Load JSON to Python list
-    jsonList = json.load(jsonStream)
-    parsedJson = json.dumps(jsonList, indent=4, sort_keys=True)
-    print(parsedJson)
+    #jsonList = json.load(jsonStream)
+    #parsedJson = json.dumps(jsonStream, indent=4, sort_keys=True)
+    jsonObject = json.loads(jsonStream)
+    print(jsonObject)
+    print(jsonObject.get("Type"))
+    #first_elem = jsonObject[0]
+    #print(first_elem)
+    #Type = first_elem['Type']
+    #print(Type)
+    #print(jsonObject['Type'])
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -20,10 +28,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
-        input = conn.recv(1024)
-        print(input)
-        input = conn.recv(1024)
-        print(input)
-        input = conn.recv(1024)
-        parseJson(input)
+
+        while True:
+            input = conn.recv(1024)
+            parseJson(input)
+
+
         s.close()
