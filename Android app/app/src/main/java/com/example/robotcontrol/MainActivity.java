@@ -149,6 +149,9 @@ public class MainActivity extends AppCompatActivity {
                 //If no exception, display a message so we know that it is connected
                 connectedStatus.setText("Connected");
 
+                //Another test
+                out.print("Hello World");
+
                 //Start the mainFunction
                 mainFunctionality();
             } catch (Exception e) {
