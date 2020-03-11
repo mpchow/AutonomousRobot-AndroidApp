@@ -1,7 +1,8 @@
 import socket
 import json
+import time
 
-PORT = 5016       # Port to listen on (non-privileged ports are > 1023)
+PORT = 5017       # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 def parseJson(byteStream):
@@ -28,10 +29,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
+        input = conn.recv(1024)
+        noValue = input
 
         while True:
             input = conn.recv(1024)
-            parseJson(input)
+            print(input)
+            if input != noValue:
+                print("Trying to print")
+                parseJson(input)
 
 
         s.close()
