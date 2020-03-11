@@ -107,32 +107,27 @@ def controller():
     kit.motor2.throttle = 0.0
     #Instantiate the error class to calculate things for us
     error = Error()
+    writeImages("firstGear.jpg")
     #Loop for the feedback loop
     try:
         while True:
             #Calculate the PID value
             error.getOptics()
             PID = error.calculatePID()
-            print(PID)
-            # If PID is less than threshold, robot turn right
-            if (PID < -0.25):
-                # need to change the values so the right image is played
-                writeImages("firstGear.jpg")
 
-            # If PID greater than threshold, robot turn left
-            elif(PID > 0.25):
-                # need to change the values so the right image is played
-                writeImages("secondGear.jpg")
-
-
-            if (error.count == 30):
+            if (error.count == 45):
+                writeImages("blinka.jpg")
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
                 break
-            time.sleep(0.02)
+            time.sleep(0.01)
+            if (PID == 0.0):
+                kit.motor1.throttle = 0.40
+                kit.motor2.throttle = 0.40
             #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.35 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.35 - PID #Assuming this is the right motor
+            else :
+                kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
+                kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -145,9 +140,9 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.055
+        self.Kp = 0.08
         self.Kd = 0.13
-        self.Ki = 0.0005
+        self.Ki = 0
         self.count = 0
 
 
@@ -160,7 +155,7 @@ class Error:
 
         if (errorTotal == 1):           # right sensor triggered
             self.count = 0
-            self.error = -1.5
+            self.error = -1.7
         elif (errorTotal == 11):        # middle and right sensors triggered
             self.count = 0
             self.error = -1
@@ -172,7 +167,7 @@ class Error:
             self.error = 1
         elif (errorTotal == 100):       # left sensor triggered
             self.count = 0
-            self.error = 1.5
+            self.error = 1.7
         elif (errorTotal == 111):       # all sensors triggered, most likely crossover
             self.count = 0
             self.error = 0
