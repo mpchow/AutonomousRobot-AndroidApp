@@ -106,11 +106,11 @@ def controller():
             PID = error.calculatePID()
 
             if (error.count == 35):
-                writeImages("blinka.jpg")
+                writeImages("stopGear.jpg")
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
                 break
-            time.sleep(0.01)
+            time.sleep(0.02)
             if (PID == 0.0):
                 kit.motor1.throttle = 0.40
                 kit.motor2.throttle = 0.40
