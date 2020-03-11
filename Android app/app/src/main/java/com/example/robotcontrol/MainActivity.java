@@ -44,15 +44,15 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5003;
+        port = 5008;
 
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
 
         try {
-            //address = InetAddress.getByName("137.82.226.227");
-            address = InetAddress.getByName("137.82.226.222");
+            address = InetAddress.getByName("137.82.226.227");
+//            address = InetAddress.getByName("137.82.226.222");
 //            byte[] addr = new byte[]{(byte) 137, 82, (byte) 226, (byte) 222};
 //           address = InetAddress.getByAddress(addr);
 
@@ -151,6 +151,10 @@ public class MainActivity extends AppCompatActivity {
 
                 //Another test
                 out.print("Hello World");
+                out.flush();
+                out.print("Andrea sucks dick");
+                out.flush();
+                sendRequest("Forward", "Autonomous");
 
                 //Start the mainFunction
                 mainFunctionality();
