@@ -115,7 +115,7 @@ def controller():
             error.getOptics()
             PID = error.calculatePID()
 
-            if (error.count == 45):
+            if (error.count == 35):
                 writeImages("blinka.jpg")
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
