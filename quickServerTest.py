@@ -28,10 +28,12 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
+        input = conn.recv(1024)
+        noValue = input
 
         while True:
             input = conn.recv(1024)
-            parseJson(input)
-
+            if (input != noValue):
+                parseJson(input)
 
         s.close()
