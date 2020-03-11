@@ -12,3 +12,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
+        input = s.recv(1024)
+        print(input)
