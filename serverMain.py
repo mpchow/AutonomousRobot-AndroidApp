@@ -252,19 +252,24 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
         while True:
             input = conn.recv(1024)
-            jsonObj = parseJson(input)
-            mode = jsonObj.get('Mode')
-            if (mode == 'controller'):
-                controller()
-        else:
-            Type = jsonObj.get("Type")
-            if (Type == 'Forward'):
-                straight()
-            elif (Type == 'Left'):
-                turnLeft()
-            elif (Type == 'Right'):
-                turnRight()
-            else:
-                off()
+            input = conn.recv(1024)
+            print(input)
+            if input != noValue:
+                print("Trying to print")
+                parseJson(input)
+                jsonObj = parseJson(input)
+                mode = jsonObj.get('Mode')
+                if (mode == 'controller'):
+                    controller()
+                else:
+                    Type = jsonObj.get("Type")
+                    if (Type == 'Forward'):
+                        straight()
+                    elif (Type == 'Left'):
+                        turnLeft()
+                    elif (Type == 'Right'):
+                        turnRight()
+                    else:
+                        off()
 
         s.close()

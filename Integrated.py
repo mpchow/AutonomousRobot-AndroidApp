@@ -79,16 +79,6 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-def animation():
-    global count
-    # show animation by iterating through 3 similar images
-    if (count == 0):
-        writeImages("firstGear.jpg")
-    elif (count == 50):
-        writeImages("secondGear.jpg")
-    else:
-        writeImages("thirdGear.jpg")
-
 def parseJson(byteStream):
     # Decode UTF-8 bytes to unicode
     # To make valid JSON, replace single quotes with double quotes
@@ -115,12 +105,12 @@ def controller():
             error.getOptics()
             PID = error.calculatePID()
 
-            if (error.count == 45):
-                writeImages("blinka.jpg")
+            if (error.count == 25):
+                writeImages("stopGear.jpg")
                 kit.motor1.throttle = 0.0
                 kit.motor2.throttle = 0.0
                 break
-            time.sleep(0.01)
+            time.sleep(0.02)
             if (PID == 0.0):
                 kit.motor1.throttle = 0.40
                 kit.motor2.throttle = 0.40
