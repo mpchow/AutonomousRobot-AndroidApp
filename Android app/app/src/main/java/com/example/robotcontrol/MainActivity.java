@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -70,26 +71,77 @@ public class MainActivity extends AppCompatActivity {
         //Set a default image
         robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
-        //Add an event listener for the forwardsButton to call moveForward onclick
-        forwardButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                moveForward();
+//        //Add an event listener for the forwardsButton to call moveForward onclick
+//        forwardButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                moveForward();
+//            }
+//        });
+
+        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        moveForward();
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        stop();
+                        return true; // if you want to handle the touch event
+                }
+                return false;
             }
         });
 
-        //Add an event listener for the leftButton to call turnLeft onclick
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                turnLeft();
+        leftButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        turnLeft();
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        stop();
+                        return true; // if you want to handle the touch event
+                }
+                return false;
             }
         });
 
-        //Add an event listener for the rightButton to call turnRight onclick
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                turnRight();
+//        //Add an event listener for the leftButton to call turnLeft onclick
+//        leftButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                turnLeft();
+//            }
+//        });
+
+        rightButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch(event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // PRESSED
+                        turnRight();
+                        return true; // if you want to handle the touch event
+                    case MotionEvent.ACTION_UP:
+                        // RELEASED
+                        stop();
+                        return true; // if you want to handle the touch event
+                }
+                return false;
             }
         });
+
+//        //Add an event listener for the rightButton to call turnRight onclick
+//        rightButton.setOnClickListener(new View.OnClickListener() {
+//            public void onClick(View v) {
+//                turnRight();
+//            }
+//        });
 
         //Add an event listener for the toggle
         modeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -226,6 +278,12 @@ public class MainActivity extends AppCompatActivity {
     public void moveForward() {
         if(modeStatus.getText() == "Mode:Remote Control") {
             sendRequest("Forward", "Remote");
+        }
+    }
+
+    public void stop() {
+        if(modeStatus.getText() == "Mode:Remote Control") {
+            sendRequest("STOP", "Remote");
         }
     }
 

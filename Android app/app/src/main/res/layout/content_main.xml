@@ -57,19 +57,19 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="200dp"
         android:text="Not Connected"
         android:textColor="#000000"
         app:layout_constraintBottom_toTopOf="@+id/forward"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.495"
+        app:layout_constraintHorizontal_bias="0.488"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="347dp"
+        android:layout_height="282dp"
         android:layout_marginStart="141dp"
         android:layout_marginLeft="141dp"
         android:layout_marginTop="99dp"
@@ -78,8 +78,10 @@
         android:layout_marginBottom="26dp"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.474"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.746"
         tools:srcCompat="@tools:sample/avatars" />
 
     <Switch
