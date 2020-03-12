@@ -241,6 +241,8 @@ class Error:
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
 
+
+
 # Wait for client connection 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -250,8 +252,9 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     with conn:
         print('Connected by', addr)
 
+
+        # Once connected, continuously check for input from app 
         while True:
-            input = conn.recv(1024)
             input = conn.recv(1024)
             print(input)
             if input != noValue:
@@ -259,17 +262,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 parseJson(input)
                 jsonObj = parseJson(input)
                 mode = jsonObj.get('Mode')
-                if (mode == 'controller'):
-                    controller()
+            if (mode == 'Autonomous'):
+                controller()
+            else:
+                Type = jsonObj.get("Type")
+                if (Type == 'Forward'):
+                    straight()
+                elif (Type == 'Left'):
+                    turnLeft()
+                elif (Type == 'Right'):
+                    turnRight()
                 else:
-                    Type = jsonObj.get("Type")
-                    if (Type == 'Forward'):
-                        straight()
-                    elif (Type == 'Left'):
-                        turnLeft()
-                    elif (Type == 'Right'):
-                        turnRight()
-                    else:
-                        off()
+                    off()
 
         s.close()
