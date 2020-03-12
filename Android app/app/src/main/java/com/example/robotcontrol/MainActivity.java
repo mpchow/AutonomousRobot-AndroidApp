@@ -1,32 +1,29 @@
 package com.example.robotcontrol;
 
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
-
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
-
 import android.os.StrictMode;
-import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
-import android.graphics.Bitmap;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import org.json.JSONObject;
 
-import java.io.*;
-import java.net.*;
-//import java.net.InetAddress;
-//import java.net.Socket;
-//import java.net.UnknownHostException;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.UnknownHostException;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -38,14 +35,14 @@ public class MainActivity extends AppCompatActivity {
     private ImageView robotCamera; //create the imageView instance
     private Switch modeToggle;
     private TextView modeStatus;
+    private Thread liveFeedThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5008;
-
+        port = 5017;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -53,18 +50,10 @@ public class MainActivity extends AppCompatActivity {
         try {
             address = InetAddress.getByName("137.82.226.227");
 //            address = InetAddress.getByName("137.82.226.222");
-//            byte[] addr = new byte[]{(byte) 137, 82, (byte) 226, (byte) 222};
-//           address = InetAddress.getByAddress(addr);
-
-
-//            socket = new Socket(address, port);
 
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-//        catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         //Instantiate the mode toggle
         modeToggle = (Switch) findViewById(R.id.modeToggle);
@@ -118,16 +107,12 @@ public class MainActivity extends AppCompatActivity {
         });
 
         //Try to serve
-//        while(true) {
             try {
                 serve();
             } catch (Exception e) {
                 //If exception, print stack trace
                 e.printStackTrace();
             }
-            final TextView connectedStatus = (TextView) findViewById(R.id.textView);
-//            connectedStatus.setText("Not Connected");
-//        }
     }
 
     //Start the sever
@@ -136,42 +121,47 @@ public class MainActivity extends AppCompatActivity {
         final TextView connectedStatus = (TextView) findViewById(R.id.textView);
 
         //While loop for handling until we close sockets
-        while (true) {
+//        while (true) {
             try {
                 //Connect it to the specified port and ip address
                 socket = new Socket(address, port);
                 System.out.println("CONNECTED");
                 //Setup the input and output streams
                 in = new BufferedInputStream(socket.getInputStream());
-//                in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
                 //If no exception, display a message so we know that it is connected
                 connectedStatus.setText("Connected");
 
-                //Another test
-                out.print("Hello World");
-                out.flush();
-                out.print("Andrea sucks dick");
-                out.flush();
-                sendRequest("Forward", "Autonomous");
-
                 //Start the mainFunction
-                mainFunctionality();
+//                mainFunctionality();
             } catch (Exception e) {
                 System.out.println("Not connected");
                 //If execption, print stack trace
                 e.printStackTrace();
             //Once the try catch finishes
-            } finally {
-                //Close the input stream
-                in.close();
-                //Close the output stream
-                out.close();
-                //Close the socket
-                socket.close();
             }
-        }
+//            finally {
+//                //Close the input stream
+//                in.close();
+//                //Close the output stream
+//                out.close();
+//                //Close the socket
+//                socket.close();
+//            }
+//        }
+
+        liveFeedThread = new Thread(recieveFeed());
+        liveFeedThread.start();
+    }
+
+    private final Runnable recieveFeed() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                mainFunctionality();
+            }
+        };
     }
 
     //Start to listen and serve requests
