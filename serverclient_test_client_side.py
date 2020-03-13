@@ -1,3 +1,4 @@
+#THIS FILE WAS FOR EXPERIMENTAL PURPOSES ONLY, WHILE WE LEARNED HOW TO GET THE SOCKET
 import io
 import socket
 import struct
@@ -6,7 +7,7 @@ import picamera
 
 client_socket = socket.socket()
 
-client_socket.connect(('192.168.56.1', 8000))  # ADD IP HERE
+client_socket.connect(('0.0.0.0.0', 8000))  # ADD IP HERE
 
 # Make a file-like object out of the connection
 connection = client_socket.makefile('wb')
