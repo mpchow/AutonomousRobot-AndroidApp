@@ -244,24 +244,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     (conn, addr) = s.accept()
     print("Connected")
     with conn:
-        print('Connected by', addr)
         img = captureStreamPIL()
-        print("Before")
         conn.send(img)
-        print("After")
         time.sleep(1)
         camera.stop_preview()
 
         input = conn.recv(1024)
-        print('after nput')
         noValue = input
-        print('after noVal')
         conn.setblocking(0)
-        print('after blocking')
         mode = "Stop"
-        print('after mode')
         writeImages("firstGear.jpg")
-        print('after wrieimg')
 
         s.close()
 
