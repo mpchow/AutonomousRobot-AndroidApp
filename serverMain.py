@@ -18,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5033     # Port to listen on (non-privileged ports are > 1023)
+PORT = 5035     # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -122,8 +122,8 @@ def parseJson(byteStream):
 # Function for robot to go straight
 def straight(kit):
     # both motors same speed
-    kit.motor1.throttle = 0.20
-    kit.motor2.throttle = 0.20
+    kit.motor1.throttle = 0.30
+    kit.motor2.throttle = 0.30
 
 # Function for robot to turn left
 def turnLeft(kit):
@@ -187,14 +187,16 @@ def writeImages(imageName):
 # Reference for sending stream: https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 def captureStreamPIL():
     stream = io.BytesIO()
-    camera.capture(stream, format='bmp')
-    stream.seek(0)
-    image = Image.open(stream)
+    camera.capture(stream, format='bmp')        # Take picture and store in stream
+    stream.seek(0)                              # Go to beginning of stream 
+    image = Image.open(stream)                  # Store as PIL Image object
 
+    # Convert to byte array
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format='bmp')
     imgByteArrToReturn = imgByteArr.getvalue()
 
+    #Return to byte array 
     return imgByteArrToReturn
 
 def controller(kit):
@@ -242,67 +244,53 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     (conn, addr) = s.accept()
     print("Connected")
     with conn:
-        print('Connected by', addr)
-        img = captureStreamPIL()
-        print("Before")
-        conn.send(img)
-        print("After")
+        img = captureStreamPIL() #capture the image 
+        conn.send(img)           # send the image through socket
         time.sleep(1)
-        camera.stop_preview()
+        camera.stop_preview()    # stop the preview
 
-        input = conn.recv(1024)
-        print('after nput')
-        noValue = input
-        print('after noVal')
-        conn.setblocking(0)
-        print('after blocking')
-        mode = "Stop"
-        print('after mode')
+        input = conn.recv(1024)  # receive input from client
+        noValue = input          # store initial input value - may be garbage
+        conn.setblocking(0)      # set connection to be blocking
+        mode = "Stop"            # default mode to stop 
         writeImages("firstGear.jpg")
-        print('after wrieimg')
 
-        #camera.start_preview()
-        # Camera warm-up time
-        #time.sleep(2)
-
-
-        #img = captureStreamPIL()
-        #print("Before")
-        #conn.send(img)
-        #print("After")
-        #time.sleep(10)
-        #camera.stop_preview()
         s.close()
 
-        # Once connected, continuously check for input from app
-        while True:
-            try:
-                # Reading next input
-                input = conn.recv(1024)
-            except:
-                print("Error!")
+        try:
 
-            print(input)
-            if input != noValue:
-                print("Trying to print")
-                jsonObj = parseJson(input)
-                mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
+            # Once connected, continuously check for input from app
+            while True:
+                try:
+                    # Reading next input
+                    input = conn.recv(1024)
+                except:
+                    print("Error!")
 
-            if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
-                print('entering auto')
-                controller(kit)
-            elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
-                Type = jsonObj.get("Type")
-                if (Type == 'Forward'): # Move forward
-                    straight(kit)
-                elif (Type == 'Left'):  # Move left
-                    turnLeft(kit)
-                elif (Type == 'Right'): # Move right
-                    turnRight(kit)
+                print(input)
+                if input != noValue:
+                    print("Trying to print")
+                    jsonObj = parseJson(input)
+                    mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
+
+                if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
+                    print('entering auto')
+                    controller(kit)
+                elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
+                    Type = jsonObj.get("Type")
+                    if (Type == 'Forward'): # Move forward
+                        straight(kit)
+                    elif (Type == 'Left'):  # Move left
+                        turnLeft(kit)
+                    elif (Type == 'Right'): # Move right
+                        turnRight(kit)
+                    else:
+                        off(kit)            # Stop moving
                 else:
-                    off(kit)            # Stop moving
-            else:
-                off(kit)
+                    off(kit)
 
-        camera.stop_preview()
-        s.close()
+            camera.stop_preview()
+            s.close()
+        except KeyboardInterrupt:
+            kit.motor1.throttle = 0.0
+            kit.motor2.throttle = 0.0

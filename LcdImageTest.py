@@ -13,9 +13,9 @@ BORDER = 5
 FONTSIZE = 24
 
 # Configuration for CS and DC pins (these are PiTFT defaults):
-cs_pin = digitalio.DigitalInOut(board.CE0)
-dc_pin = digitalio.DigitalInOut(board.D25)
-reset_pin = digitalio.DigitalInOut(board.D24)
+cs_pin = digitalio.DigitalInOut(board.CE0) # set up CS PIN
+dc_pin = digitalio.DigitalInOut(board.D25) # set up DC pint
+reset_pin = digitalio.DigitalInOut(board.D24) # set up reset pin
 
 # Config for display baudrate (default max is 24mhz):
 BAUDRATE = 24000000
@@ -33,11 +33,11 @@ disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   #
 # Make sure to create image with mode 'RGB' for full color.
 if disp.rotation % 180 == 90:
     height = disp.width   # we swap height/width to rotate it to landscape!
-    width = disp.height
+    width = disp.height # set width
 else:
     width = disp.width   # we swap height/width to rotate it to landscape!
-    height = disp.height
-image = Image.new('RGB', (width, height))
+    height = disp.height # set height
+image = Image.new('RGB', (width, height)) # create an image with the width and height
 
 # Get drawing object to draw on image.
 draw = ImageDraw.Draw(image)
@@ -46,7 +46,7 @@ draw = ImageDraw.Draw(image)
 draw.rectangle((0, 0, width, height), outline=0, fill=(0, 0, 0))
 disp.image(image)
 
-image = Image.open("firstGear.jpg")
+image = Image.open("firstGear.jpg") # test opening the first gear image
 
 # Scale the image to the smaller screen dimension
 image_ratio = image.width / image.height

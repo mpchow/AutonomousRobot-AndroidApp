@@ -11,19 +11,19 @@ sensor1 = 26
 sensor2 = 19
 sensor3 = 13
 # Setup GPIO inputs
-GPIO.setup(sensor1, GPIO.IN)
-GPIO.setup(sensor2, GPIO.IN)
-GPIO.setup(sensor3, GPIO.IN)
+GPIO.setup(sensor1, GPIO.IN) # set up sensor 1
+GPIO.setup(sensor2, GPIO.IN) # set up sensor 2
+GPIO.setup(sensor3, GPIO.IN) # set up sensor 3
 
 
 def controller():
     #Instantiate the motorkit instance
     kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
+    kit.motor1.throttle = 0.0 # set left motor speed to 0
+    kit.motor2.throttle = 0.0 # set right motor speed to 0
     #Instantiate the error class to calculate things for us
-    error = Error()
+    error = Error() # set up the error varriable using the error class
     #Loop for the feedback loop
     try:
         while True:
