@@ -3,6 +3,9 @@ from adafruit_motorkit import MotorKit
 import time
 import digitalio
 import board
+import io
+from picamera import PiCamera
+import picamera
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.ili9341 as ili9341
 import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
@@ -15,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5023      # Port to listen on (non-privileged ports are > 1023)
+PORT = 5038      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -197,7 +200,6 @@ def captureStreamPIL():
 def controller(kit):
     global error
 
-    writeImages("firstGear.jpg")
     #Loop for the feedback loop
     try:
         #Calculate the PID value
@@ -239,6 +241,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         noValue = input
         conn.setblocking(0)
         mode = "Autonomous"
+        writeImages("firstGear.jpg")
 
         camera.start_preview()
         # Camera warm-up time
@@ -259,8 +262,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
             if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
-                img = captureStreamPIL()
-                conn.send(img)
                 controller(kit)
             elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
                 Type = jsonObj.get("Type")
