@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5019;
+        port = 5023;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -66,81 +66,100 @@ public class MainActivity extends AppCompatActivity {
         final Button leftButton = (Button) findViewById(R.id.leftwards);
         //Get the rightbutton
         final Button rightButton = (Button) findViewById(R.id.rightwards);
+        //Get the stopButton
+        final Button stopButton = (Button) findViewById(R.id.stop);
+        //Get the startButton
+        final Button startButton = (Button) findViewById(R.id.Start);
         //Instantiate the imageView
         robotCamera = findViewById(R.id.imageView);
         //Set a default image
         robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
-//        //Add an event listener for the forwardsButton to call moveForward onclick
-//        forwardButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                moveForward();
-//            }
-//        });
-
-        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+        startButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-//                        while(event.getAction() == MotionEvent.ACTION_DOWN) {
-                            moveForward();
-//                        }
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
+            public void onClick(View v) {
+                sendRequest("Null", "Autonomous");
             }
         });
 
-        leftButton.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        turnLeft();
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
+        //Add an event listener for the forwardsButton to call moveForward onclick
+        forwardButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                moveForward();
             }
         });
 
-//        //Add an event listener for the leftButton to call turnLeft onclick
-//        leftButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                turnLeft();
-//            }
-//        });
-
-        rightButton.setOnTouchListener(new View.OnTouchListener() {
+        //Add an event listener
+        stopButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()) {
-                    case MotionEvent.ACTION_DOWN:
-                        // PRESSED
-                        turnRight();
-                        return true; // if you want to handle the touch event
-                    case MotionEvent.ACTION_UP:
-                        // RELEASED
-                        return true; // if you want to handle the touch event
-                }
-                return false;
+            public void onClick(View v) {
+                stop();
             }
         });
 
-//        //Add an event listener for the rightButton to call turnRight onclick
-//        rightButton.setOnClickListener(new View.OnClickListener() {
-//            public void onClick(View v) {
-//                turnRight();
+//        forwardButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch(event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // PRESSED
+////                        while(event.getAction() == MotionEvent.ACTION_DOWN) {
+//                            moveForward();
+////                        }
+//                        return true; // if you want to handle the touch event
+//                    case MotionEvent.ACTION_UP:
+//                        // RELEASED
+//                        return true; // if you want to handle the touch event
+//                }
+//                return false;
 //            }
 //        });
+
+//        leftButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch(event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // PRESSED
+//                        turnLeft();
+//                        return true; // if you want to handle the touch event
+//                    case MotionEvent.ACTION_UP:
+//                        // RELEASED
+//                        return true; // if you want to handle the touch event
+//                }
+//                return false;
+//            }
+//        });
+
+        //Add an event listener for the leftButton to call turnLeft onclick
+        leftButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                turnLeft();
+            }
+        });
+
+//        rightButton.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                switch(event.getAction()) {
+//                    case MotionEvent.ACTION_DOWN:
+//                        // PRESSED
+//                        turnRight();
+//                        return true; // if you want to handle the touch event
+//                    case MotionEvent.ACTION_UP:
+//                        // RELEASED
+//                        return true; // if you want to handle the touch event
+//                }
+//                return false;
+//            }
+//        });
+
+        //Add an event listener for the rightButton to call turnRight onclick
+        rightButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                turnRight();
+            }
+        });
 
         //Add an event listener for the toggle
         modeToggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -183,6 +202,9 @@ public class MainActivity extends AppCompatActivity {
 
                 //If no exception, display a message so we know that it is connected
                 connectedStatus.setText("Connected");
+                liveFeedThread = new Thread(recieveFeed());
+                liveFeedThread.start();
+
 
                 //Start the mainFunction
 //                mainFunctionality();
@@ -202,8 +224,6 @@ public class MainActivity extends AppCompatActivity {
 //            }
 //        }
 
-        liveFeedThread = new Thread(recieveFeed());
-        liveFeedThread.start();
     }
 
     private final Runnable recieveFeed() {
@@ -277,6 +297,12 @@ public class MainActivity extends AppCompatActivity {
     public void moveForward() {
         if(modeStatus.getText() == "Mode:Remote Control") {
             sendRequest("Forward", "Remote");
+        }
+    }
+
+    public void stop() {
+        if(modeStatus.getText() == "Mode:Remote Control") {
+            sendRequest("Stop", "Remote");
         }
     }
 
