@@ -159,6 +159,7 @@ class Error:
 
 
     def getOptics(self):
+        # sens1 = left sensor, sens2 = middle sensor, sens3 = right sensor
         sens1 = GPIO.input(sensor1)
         sens2 = GPIO.input(sensor2)
         sens3 = GPIO.input(sensor3)

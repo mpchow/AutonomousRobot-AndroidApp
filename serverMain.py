@@ -11,6 +11,7 @@ import adafruit_rgb_display.st7735 as st7735        # pylint: disable=unused-imp
 import adafruit_rgb_display.ssd1351 as ssd1351      # pylint: disable=unused-import
 import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-import
 
+# Import libraries to allow us to communicate with android app
 import json
 import socket
 
@@ -86,11 +87,11 @@ class Error:
 
 
     def getOptics(self):
+        # sens1 = left sensor, sens2 = middle sensor, sens3 = right sensor
         sens1 = GPIO.input(sensor1)
         sens2 = GPIO.input(sensor2)
         sens3 = GPIO.input(sensor3)
         self.sensorVal = [sens1, sens2, sens3]
-
 
     def calculatePID(self):
         # Calculates PID value based on new sensor inputs and past values (prevError, integral)
@@ -100,7 +101,7 @@ class Error:
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
 
-#Instantiate the error class to calculate things for us
+#Instantiate the error class to calculate PID for us
 error = Error()
 
 # Function to parse json
@@ -111,25 +112,30 @@ def parseJson(byteStream):
     # Load JSON to Python list
     jsonObject = json.loads(jsonStream)
     print(jsonObject)
-    print(jsonObject.get("Type"))
+    print(jsonObject.get("Type"))   # Type tells us if we are moving forward, left, right, or stopping
     return jsonObject
 
 # Function for robot to go straight
 def straight(kit):
+    # both motors same speed
     kit.motor1.throttle = 0.40
     kit.motor2.throttle = 0.40
 
 # Function for robot to turn left
 def turnLeft(kit):
+    # left motor slower than right
     kit.motor1.throttle = 0.25
     kit.motor2.throttle = 0.5
 
 # Function for robot to turn right
 def turnRight(kit):
+    # right motor slower than left
     kit.motor1.throttle = 0.5
     kit.motor2.throttle = 0.25
 
+# Function for robot to turn off
 def off(kit):
+    # both motors turned off
     kit.motor1.throttle = 0.0
     kit.motor2.throttle = 0.0
 
@@ -222,29 +228,29 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         # Once connected, continuously check for input from app
         while True:
             try:
+                # Reading next input
                 input = conn.recv(1024)
             except:
-                print("Yeet")
+                print("Error!")
 
             print(input)
             if input != noValue:
                 print("Trying to print")
-                parseJson(input)
                 jsonObj = parseJson(input)
-                mode = jsonObj.get('Mode')
+                mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
-            if (mode == 'Autonomous'):
+            if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
                 controller(kit)
-            elif (mode == 'Remote'):
+            elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
                 Type = jsonObj.get("Type")
-                if (Type == 'Forward'):
+                if (Type == 'Forward'): # Move forward
                     straight(kit)
-                elif (Type == 'Left'):
+                elif (Type == 'Left'):  # Move left
                     turnLeft(kit)
-                elif (Type == 'Right'):
+                elif (Type == 'Right'): # Move right
                     turnRight(kit)
                 else:
-                    off(kit)
+                    off(kit)            # Stop moving
             else:
                 off(kit)
 
