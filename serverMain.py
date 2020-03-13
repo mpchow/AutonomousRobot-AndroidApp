@@ -125,16 +125,6 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-def animation():
-    global count
-    # show animation by iterating through 3 similar images
-    if (count == 0):
-        writeImages("firstGear.jpg")
-    elif (count == 50):
-        writeImages("secondGear.jpg")
-    else:
-        writeImages("thirdGear.jpg")
-
 def parseJson(byteStream):
     # Decode UTF-8 bytes to unicode
     # To make valid JSON, replace single quotes with double quotes
@@ -169,11 +159,10 @@ def controller():
             # need to change the values so the right image is played
             writeImages("secondGear.jpg")
 
-
         if (error.count == 30):
             kit.motor1.throttle = 0.0
             kit.motor2.throttle = 0.0
-            break
+
         time.sleep(0.02)
         #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
         kit.motor1.throttle = 0.35 + PID #Assuming this is the left motor
