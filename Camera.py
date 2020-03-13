@@ -67,6 +67,11 @@ def captureStream():
     return my_file
 
 def captureStreamPIL():
+    stream = io.BytesIO()
+    camera.capture(stream, format='bmp')
+    stream.seek(0)
+    image = Image.open(stream)
+    return image
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -78,13 +83,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Camera warm-up time
     time.sleep(2)
     while True:
-        stream = captureStream()
-        with open("stream", "rb") as fd:
-            buf = fd.read(1024)
-        while (buf):
-            s.send(buf)
-            buf = fd.read(1024)
+        # stream = captureStream()
+        # with open("stream", "rb") as fd:
+        #     buf = fd.read(1024)
+        # while (buf):
+        #     s.send(buf)
+        #     buf = fd.read(1024)
         # s.send(stream)
+        img = captureStreamPIL()
+        b = bytearray(img)
+        conn.send(b)
     
     camera.stop_preview()
     s.close()
