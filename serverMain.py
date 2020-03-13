@@ -244,15 +244,15 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     (conn, addr) = s.accept()
     print("Connected")
     with conn:
-        img = captureStreamPIL()
-        conn.send(img)
+        img = captureStreamPIL() #capture the image 
+        conn.send(img)           # send the image through socket
         time.sleep(1)
-        camera.stop_preview()
+        camera.stop_preview()    # stop the preview
 
-        input = conn.recv(1024)
-        noValue = input
-        conn.setblocking(0)
-        mode = "Stop"
+        input = conn.recv(1024)  # receive input from client
+        noValue = input          # store initial input value - may be garbage
+        conn.setblocking(0)      # set connection to be blocking
+        mode = "Stop"            # default mode to stop 
         writeImages("firstGear.jpg")
 
         s.close()
