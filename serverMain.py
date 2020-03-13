@@ -18,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5031     # Port to listen on (non-privileged ports are > 1023)
+PORT = 5033     # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -199,6 +199,7 @@ def captureStreamPIL():
 
 def controller(kit):
     global error
+    print('entering controller')
 
     #Loop for the feedback loop
     try:
@@ -246,7 +247,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print("Before")
         conn.send(img)
         print("After")
-        time.sleep(10)
+        time.sleep(1)
         camera.stop_preview()
 
         input = conn.recv(1024)
@@ -255,7 +256,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print('after noVal')
         conn.setblocking(0)
         print('after blocking')
-        mode = "Autonomous"
+        mode = "Stop"
         print('after mode')
         writeImages("firstGear.jpg")
         print('after wrieimg')
@@ -288,6 +289,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
             if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
+                print('entering auto')
                 controller(kit)
             elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
                 Type = jsonObj.get("Type")
