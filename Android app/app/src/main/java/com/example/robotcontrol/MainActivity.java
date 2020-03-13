@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5077;
+        port = 5033;
 
         //Change the android policy to allow us to use network operations on the main thread
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
@@ -85,29 +85,31 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //Send json to pi that we want to start in autonomous mode
-                sendRequest("Null", "Autonomous");
+//                sendRequest("Null", "Autonomous");
+                sendRequest("Null", "Stop");
 
-                //Run an runnable on the ui thread to update the live feed
-                MainActivity.this.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        //Create a new timer task
-                        Timer timer = new Timer();
-                        timer.scheduleAtFixedRate(new TimerTask() {
-                            @Override
-                            public void run() {
-                                //Create a runnable that calls the mainFunctionality
-                                mHandler.post(new Runnable() {
-                                    public void run() {
-                                        mainFunctionality();
-                                    }
-                                });
-                            }
-                            //Set a delay of 1ms, and then execute every 2000ms after that
-                        }, 1, 2000);
-
-                    }
-                });
+//                //Run an runnable on the ui thread to update the live feed
+//                MainActivity.this.runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        //Create a new timer task
+//                        Timer timer = new Timer();
+//                        timer.scheduleAtFixedRate(new TimerTask() {
+//                            @Override
+//                            public void run() {
+//                                //Create a runnable that calls the mainFunctionality
+//                                mHandler.post(new Runnable() {
+//                                    public void run() {
+//                                        mainFunctionality();
+//                                    }
+//                                });
+//                            }
+//                            //Set a delay of 1ms, and then execute every 2000ms after that
+//                        }, 1, 2000);
+//
+//                    }
+//                });
+                mainFunctionality();
             }
         });
 
