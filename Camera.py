@@ -16,15 +16,17 @@ camera = PiCamera()
 
 # Reference for sending stream: https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 def captureStreamPIL():
-    stream = io.BytesIO()
-    camera.capture(stream, format='bmp')
-    stream.seek(0)
-    image = Image.open(stream)
+    stream = io.BytesIO()                   
+    camera.capture(stream, format='bmp')    # capture the image and store in stream as bmp
+    stream.seek(0)                          # start at beginning of stream 
+    image = Image.open(stream)              # read the contents of the stream and store in PIL Image
 
-    imgByteArr = io.BytesIO()
+    # Convert to byte array 
+    imgByteArr = io.BytesIO()               
     image.save(imgByteArr, format='bmp')
     imgByteArrToReturn = imgByteArr.getvalue()
 
+    # Return to byte array to send 
     return imgByteArrToReturn
 
 
