@@ -5,6 +5,7 @@ import socket
 import struct
 import time
 import picamera
+from PIL import Image
 # from adafruit_st7735r import ST7735R
 # import adafruit_imageload
 
@@ -57,9 +58,31 @@ def clearStream():
 
 def captureStream():
     # Create an in-memory stream
-    my_stream = io.BytesIO()
-    camera.capture(my_stream, 'bmp')
-    return my_stream
+    # my_stream = io.BytesIO()
+    # Explicitly open a new file called my_image.jpg
+    my_file = open('my_image.bmp', 'wb')
+    # camera.capture(my_stream, 'bmp')
+    camera.capture(my_file)
+    # return my_stream
+    return my_file
+
+def captureStreamPIL():
+    stream = io.BytesIO()
+    camera.capture(stream, format='bmp')
+    stream.seek(0)
+    image = Image.open(stream)
+
+    # pil_im = Image.fromarray(image)
+    # b = io.BytesIO()
+    # pil_im.save(b, 'jpeg')
+    # im_bytes = b.getvalue()
+
+    imgByteArr = io.BytesIO()
+    image.save(imgByteArr, format='PNG')
+    imgByteArr = imgByteArr.getvalue()
+
+    return imgByteArr
+
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.bind((HOST, PORT))
@@ -70,8 +93,19 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     # Camera warm-up time
     time.sleep(2)
     while True:
-        stream = captureStream()
-        s.send(stream)
+        # stream = captureStream()
+        # with open("stream", "rb") as fd:
+        #     buf = fd.read(1024)
+        # while (buf):
+        #     s.send(buf)
+        #     buf = fd.read(1024)
+        # s.send(stream)
+        img = captureStreamPIL()
+        conn.send(img)
+        
+
+        # b = bytearray(img)
+        # conn.send(b)
     
     camera.stop_preview()
     s.close()
