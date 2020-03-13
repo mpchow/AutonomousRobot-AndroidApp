@@ -235,7 +235,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
 
             if (mode == 'Autonomous'):
                 controller(kit)
-            elif (mode == 'Remote Control'):
+            elif (mode == 'Remote'):
                 Type = jsonObj.get("Type")
                 if (Type == 'Forward'):
                     straight(kit)
