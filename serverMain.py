@@ -19,9 +19,6 @@ HOST = ''
 
 GPIO.setmode(GPIO.BCM)
 
-#Instantiate the motorkit instance
-kit = MotorKit()
-
 # Assign sensor pins
 sensor1 = 26
 sensor2 = 19
@@ -57,8 +54,7 @@ def parseJson(byteStream):
     return jsonObject
 
 # Function for robot to go straight
-def straight():
-    global kit
+def straight(kit):
     kit.motor1.throttle = .25
     kit.motor2.throttle = .25
     time.sleep(1)
@@ -66,8 +62,7 @@ def straight():
     kit.motor2.throttle = 0
 
 # Function for robot to turn left
-def turnLeft():
-    global kit
+def turnLeft(kit):
     kit.motor1.throttle = 0.25
     kit.motor2.throttle = 0.5
     time.sleep(1)
@@ -75,16 +70,14 @@ def turnLeft():
     kit.motor2.throttle = 0
 
 # Function for robot to turn right
-def turnRight():
-    global kit
+def turnRight(kit):
     kit.motor1.throttle = 0.5
     kit.motor2.throttle = 0.25
     time.sleep(1)
     kit.motor1.throttle = 0
     kit.motor2.throttle = 0
 
-def off():
-    global kit
+def off(kit):
     kit.motor1.throttle = 0.0
     kit.motor2.throttle = 0.0
 
@@ -130,7 +123,6 @@ def writeImages(imageName):
     disp.image(image)
 
 def controller():
-    global kit
 
     #Initially start the motors at same speed so they are running straight
     kit.motor1.throttle = 0.0
@@ -219,7 +211,9 @@ class Error:
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
 
-
+    
+#Instantiate the motorkit instance
+kit = MotorKit()
 
 # Wait for client connection
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -244,17 +238,17 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 mode = jsonObj.get('Mode')
 
             if (mode == 'Autonomous'):
-                controller()
+                controller(kit)
             else:
                 Type = jsonObj.get("Type")
                 if (Type == 'Forward'):
-                    straight()
+                    straight(kit)
                 elif (Type == 'Left'):
-                    turnLeft()
+                    turnLeft(kit)
                 elif (Type == 'Right'):
-                    turnRight()
+                    turnRight(kit)
                 else:
-                    off()
+                    off(kit)
 
 
         s.close()
