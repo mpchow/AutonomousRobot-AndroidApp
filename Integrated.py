@@ -87,6 +87,7 @@ def parseJson(byteStream):
     jsonList = json.load(jsonStream)
     parsedJson = json.dumps(jsonList, indent=4, sort_keys=True)
     print(parsedJson)
+    return jsonObject
 
 def controller():
 
