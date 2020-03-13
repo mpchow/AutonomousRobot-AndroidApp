@@ -55,8 +55,8 @@ def parseJson(byteStream):
 
 # Function for robot to go straight
 def straight(kit):
-    kit.motor1.throttle = .25
-    kit.motor2.throttle = .25
+    kit.motor1.throttle = .40
+    kit.motor2.throttle = .40
     time.sleep(1)
     kit.motor1.throttle = 0
     kit.motor2.throttle = 0
@@ -122,7 +122,7 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-def controller():
+def controller(kit):
 
     #Initially start the motors at same speed so they are running straight
     kit.motor1.throttle = 0.0
@@ -211,13 +211,13 @@ class Error:
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
 
-    
+
 #Instantiate the motorkit instance
 kit = MotorKit()
 
 # Wait for client connection
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
-    off()
+    off(kit)
     s.bind((HOST, PORT))
     s.listen()
     (conn, addr) = s.accept()
