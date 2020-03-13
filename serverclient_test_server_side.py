@@ -1,3 +1,4 @@
+"""
 import io
 import socket
 import struct
@@ -41,6 +42,7 @@ try:
 finally:
     connection.close()
     server_socket.close()
+"""
 """
 import io
 import socket

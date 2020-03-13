@@ -1,4 +1,6 @@
+#EXPERIMENTS WITH OPENCV
 #import the necessary packages
+#only works if OpenCV is installed on pi
 from picamera.array import PiRGBArray
 from picamera import PiCamera
 import socket
@@ -11,8 +13,9 @@ import struct
 import base64
 import zmq
 
+#this stuff did not pan out, we did not get around to it
 port = 5000
-#initialize socket stuff
+#initialize socket stuff (if we had gone this route)
 '''
 s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 print("Socket created")
@@ -48,22 +51,23 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
         break
     """
     #lower threshold, upper color threshold
-    brightmask = cv2.inRange(image, (245,245,245), (255,255,255))
-    darkmask = cv2.inRange(image, (0,0,0), (10,10,10))
-    redmask = cv2.inRange(image_red, (160,100,100),(179,255,255))
-    brightBits = cv2.countNonZero(brightmask)
-    darkBits = cv2.countNonZero(darkmask)
-    redBits = cv2.countNonZero(redmask)
+    brightmask = cv2.inRange(image, (245,245,245), (255,255,255)) #range for "bright" values
+    darkmask = cv2.inRange(image, (0,0,0), (10,10,10)) #range for "dark" values
+    redmask = cv2.inRange(image_red, (160,100,100),(179,255,255)) #range for "red" values
+    brightBits = cv2.countNonZero(brightmask) #find amount of screen that is "bright"
+    darkBits = cv2.countNonZero(darkmask) #find amount of screen that is "dark"
+    redBits = cv2.countNonZero(redmask) #find amount of screen that is "red"
 
     if brightBits > 640 * 480 * 0.9:
-        print("Too Bright")
+        print("Too Bright") #90% of screen
 
     if darkBits > 640 * 480 * 0.9:
-        print("Too Dark")
+        print("Too Dark") #90% of screen
 
     if redBits > 640 * 480 * 0.2:
-        print("Too Red")
+        print("Too Red") #20% of screen
 
+    #show frames
     cv2.imshow("Frame", image)
     cv2.imshow("BrightMask", brightmask)
     cv2.imshow("DarkMask", darkmask)
@@ -73,6 +77,7 @@ for frame in camera.capture_continuous(rawCapture, format="bgr", use_video_port=
 
     rawCapture.truncate(0)
 
+    #press q to destroy
     if key == ord("q"):
         cv2.destroyAllWindows()
         break
