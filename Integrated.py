@@ -105,6 +105,7 @@ def controller():
             error.getOptics()
             PID = error.calculatePID()
 
+            # Print stop image if counted to 25
             if (error.count == 25):
                 writeImages("stopGear.jpg")
                 kit.motor1.throttle = 0.0
@@ -114,7 +115,7 @@ def controller():
             if (PID == 0.0):
                 kit.motor1.throttle = 0.40
                 kit.motor2.throttle = 0.40
-            #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+            #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
             else :
                 kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
                 kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
@@ -133,6 +134,7 @@ class Error:
         self.Kp = 0.08
         self.Kd = 0.13
         self.Ki = 0
+        # count for stopping motors
         self.count = 0
 
 

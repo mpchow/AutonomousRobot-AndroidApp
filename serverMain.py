@@ -148,25 +148,21 @@ def controller():
         #Calculate the PID value
         error.getOptics()
         PID = error.calculatePID()
-        print(PID)
-        # If PID is less than threshold, robot turn right
-        if (PID < -0.25):
-            # need to change the values so the right image is played
-            writeImages("firstGear.jpg")
-
-        # If PID greater than threshold, robot turn left
-        elif(PID > 0.25):
-            # need to change the values so the right image is played
-            writeImages("secondGear.jpg")
-
-        if (error.count == 30):
+        
+        # Print stop image if counted to 25
+        if (error.count == 25):
+            writeImages("stopGear.jpg")
             kit.motor1.throttle = 0.0
             kit.motor2.throttle = 0.0
-
+            
         time.sleep(0.02)
-        #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-        kit.motor1.throttle = 0.35 + PID #Assuming this is the left motor
-        kit.motor2.throttle = 0.35 - PID #Assuming this is the right motor
+        if (PID == 0.0):
+            kit.motor1.throttle = 0.40
+            kit.motor2.throttle = 0.40
+        #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+        else :
+            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -179,9 +175,10 @@ class Error:
         self.error = 0
         self.prevError = 0
         self.integral = 0
-        self.Kp = 0.055
+        self.Kp = 0.08
         self.Kd = 0.13
-        self.Ki = 0.0005
+        self.Ki = 0
+        # count for stopping motors
         self.count = 0
 
 
@@ -239,7 +236,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
-
+        input = conn.recv(1024)
+        noValue = input
 
         # Once connected, continuously check for input from app 
         while True:
