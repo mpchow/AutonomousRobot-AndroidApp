@@ -119,20 +119,20 @@ def parseJson(byteStream):
 # Function for robot to go straight
 def straight(kit):
     # both motors same speed
-    kit.motor1.throttle = 0.40
-    kit.motor2.throttle = 0.40
+    kit.motor1.throttle = 0.20
+    kit.motor2.throttle = 0.20
 
 # Function for robot to turn left
 def turnLeft(kit):
     # left motor slower than right
-    kit.motor1.throttle = 0.25
+    kit.motor1.throttle = 0.15
     kit.motor2.throttle = 0.5
 
 # Function for robot to turn right
 def turnRight(kit):
     # right motor slower than left
     kit.motor1.throttle = 0.5
-    kit.motor2.throttle = 0.25
+    kit.motor2.throttle = 0.15
 
 # Function for robot to turn off
 def off(kit):
