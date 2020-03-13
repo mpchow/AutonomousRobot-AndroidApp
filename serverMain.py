@@ -14,7 +14,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5021      # Port to listen on (non-privileged ports are > 1023)
+PORT = 5022      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -113,40 +113,36 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-def controller(kit, jsonObj):
-    Type = jsonObj.get("Type")
+def controller(kit):
 
-    while (Type == "NULL"):
-        Type = jsonObj.get("Type")
+    #Initially start the motors at same speed so they are running straight
+    kit.motor1.throttle = 0.0
+    kit.motor2.throttle = 0.0
+    #Instantiate the error class to calculate things for us
+    error = Error()
+    #Loop for the feedback loop
+    try:
+        #Calculate the PID value
+        error.getOptics()
+        PID = error.calculatePID()
+        time.sleep(0.02)
 
-        #Initially start the motors at same speed so they are running straight
-        kit.motor1.throttle = 0.0
-        kit.motor2.throttle = 0.0
-        #Instantiate the error class to calculate things for us
-        error = Error()
-        #Loop for the feedback loop
-        try:
-            #Calculate the PID value
-            error.getOptics()
-            PID = error.calculatePID()
-            time.sleep(0.02)
-
-            # Print stop image if counted to 25
-            if (error.count == 25):
-                writeImages("stopGear.jpg")
-                kit.motor1.throttle = 0.0
-                kit.motor2.throttle = 0.0
-            elif (PID == 0.0):
-                kit.motor1.throttle = 0.40
-                kit.motor2.throttle = 0.40
-            #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            else :
-                kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
-                kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
-
-        except KeyboardInterrupt:
+        # Print stop image if counted to 25
+        if (error.count == 25):
+            writeImages("stopGear.jpg")
             kit.motor1.throttle = 0.0
             kit.motor2.throttle = 0.0
+        elif (PID == 0.0):
+            kit.motor1.throttle = 0.40
+            kit.motor2.throttle = 0.40
+            #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+        else :
+            kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
+            kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
+
+    except KeyboardInterrupt:
+        kit.motor1.throttle = 0.0
+        kit.motor2.throttle = 0.0
 
 class Error:
     def __init__(self):
@@ -221,10 +217,16 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         print('Connected by', addr)
         input = conn.recv(1024)
         noValue = input
+        conn.setblocking(0)
+        mode = "Autonomous"
 
         # Once connected, continuously check for input from app
         while True:
-            input = conn.recv(1024)
+            try:
+                input = conn.recv(1024)
+            except:
+                print("Yeet")
+
             print(input)
             if input != noValue:
                 print("Trying to print")
@@ -233,8 +235,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 mode = jsonObj.get('Mode')
 
             if (mode == 'Autonomous'):
-                #controller(kit)
-                controller(kit, jsonObj)
+                controller(kit)
             else:
                 Type = jsonObj.get("Type")
                 if (Type == 'Forward'):
