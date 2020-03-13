@@ -14,7 +14,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5017      # Port to listen on (non-privileged ports are > 1023)
+PORT = 5018      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -55,8 +55,8 @@ def parseJson(byteStream):
 
 # Function for robot to go straight
 def straight(kit):
-    kit.motor1.throttle = .40
-    kit.motor2.throttle = .40
+    kit.motor1.throttle = 0.40
+    kit.motor2.throttle = 0.40
 
 # Function for robot to turn left
 def turnLeft(kit):
