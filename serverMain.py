@@ -18,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5033     # Port to listen on (non-privileged ports are > 1023)
+PORT = 5035     # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -122,8 +122,8 @@ def parseJson(byteStream):
 # Function for robot to go straight
 def straight(kit):
     # both motors same speed
-    kit.motor1.throttle = 0.20
-    kit.motor2.throttle = 0.20
+    kit.motor1.throttle = 0.30
+    kit.motor2.throttle = 0.30
 
 # Function for robot to turn left
 def turnLeft(kit):
@@ -274,35 +274,40 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #camera.stop_preview()
         s.close()
 
-        # Once connected, continuously check for input from app
-        while True:
-            try:
-                # Reading next input
-                input = conn.recv(1024)
-            except:
-                print("Error!")
+        try:
 
-            print(input)
-            if input != noValue:
-                print("Trying to print")
-                jsonObj = parseJson(input)
-                mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
+            # Once connected, continuously check for input from app
+            while True:
+                try:
+                    # Reading next input
+                    input = conn.recv(1024)
+                except:
+                    print("Error!")
 
-            if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
-                print('entering auto')
-                controller(kit)
-            elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
-                Type = jsonObj.get("Type")
-                if (Type == 'Forward'): # Move forward
-                    straight(kit)
-                elif (Type == 'Left'):  # Move left
-                    turnLeft(kit)
-                elif (Type == 'Right'): # Move right
-                    turnRight(kit)
+                print(input)
+                if input != noValue:
+                    print("Trying to print")
+                    jsonObj = parseJson(input)
+                    mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
+
+                if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
+                    print('entering auto')
+                    controller(kit)
+                elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
+                    Type = jsonObj.get("Type")
+                    if (Type == 'Forward'): # Move forward
+                        straight(kit)
+                    elif (Type == 'Left'):  # Move left
+                        turnLeft(kit)
+                    elif (Type == 'Right'): # Move right
+                        turnRight(kit)
+                    else:
+                        off(kit)            # Stop moving
                 else:
-                    off(kit)            # Stop moving
-            else:
-                off(kit)
+                    off(kit)
 
-        camera.stop_preview()
-        s.close()
+            camera.stop_preview()
+            s.close()
+        except KeyboardInterrupt:
+            kit.motor1.throttle = 0.0
+            kit.motor2.throttle = 0.0
