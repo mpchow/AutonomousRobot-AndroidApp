@@ -155,30 +155,29 @@ def controller():
     error = Error()
     #Loop for the feedback loop
     try:
-        while True:
-            #Calculate the PID value
-            error.getOptics()
-            PID = error.calculatePID()
-            print(PID)
-            # If PID is less than threshold, robot turn right
-            if (PID < -0.25):
-                # need to change the values so the right image is played
-                writeImages("firstGear.jpg")
+        #Calculate the PID value
+        error.getOptics()
+        PID = error.calculatePID()
+        print(PID)
+        # If PID is less than threshold, robot turn right
+        if (PID < -0.25):
+            # need to change the values so the right image is played
+            writeImages("firstGear.jpg")
 
-            # If PID greater than threshold, robot turn left
-            elif(PID > 0.25):
-                # need to change the values so the right image is played
-                writeImages("secondGear.jpg")
+        # If PID greater than threshold, robot turn left
+        elif(PID > 0.25):
+            # need to change the values so the right image is played
+            writeImages("secondGear.jpg")
 
 
-            if (error.count == 30):
-                kit.motor1.throttle = 0.0
-                kit.motor2.throttle = 0.0
-                break
-            time.sleep(0.02)
-            #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-            kit.motor1.throttle = 0.35 + PID #Assuming this is the left motor
-            kit.motor2.throttle = 0.35 - PID #Assuming this is the right motor
+        if (error.count == 30):
+            kit.motor1.throttle = 0.0
+            kit.motor2.throttle = 0.0
+            break
+        time.sleep(0.02)
+        #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
+        kit.motor1.throttle = 0.35 + PID #Assuming this is the left motor
+        kit.motor2.throttle = 0.35 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
         kit.motor1.throttle = 0.0
@@ -262,6 +261,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 parseJson(input)
                 jsonObj = parseJson(input)
                 mode = jsonObj.get('Mode')
+                
             if (mode == 'Autonomous'):
                 controller()
             else:

@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5017;
+        port = 5019;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -84,11 +84,12 @@ public class MainActivity extends AppCompatActivity {
                 switch(event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         // PRESSED
-                        moveForward();
+//                        while(event.getAction() == MotionEvent.ACTION_DOWN) {
+                            moveForward();
+//                        }
                         return true; // if you want to handle the touch event
                     case MotionEvent.ACTION_UP:
                         // RELEASED
-                        stop();
                         return true; // if you want to handle the touch event
                 }
                 return false;
@@ -105,7 +106,6 @@ public class MainActivity extends AppCompatActivity {
                         return true; // if you want to handle the touch event
                     case MotionEvent.ACTION_UP:
                         // RELEASED
-                        stop();
                         return true; // if you want to handle the touch event
                 }
                 return false;
@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                         return true; // if you want to handle the touch event
                     case MotionEvent.ACTION_UP:
                         // RELEASED
-                        stop();
                         return true; // if you want to handle the touch event
                 }
                 return false;
@@ -278,12 +277,6 @@ public class MainActivity extends AppCompatActivity {
     public void moveForward() {
         if(modeStatus.getText() == "Mode:Remote Control") {
             sendRequest("Forward", "Remote");
-        }
-    }
-
-    public void stop() {
-        if(modeStatus.getText() == "Mode:Remote Control") {
-            sendRequest("STOP", "Remote");
         }
     }
 
