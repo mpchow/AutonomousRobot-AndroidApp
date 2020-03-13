@@ -2,6 +2,7 @@ package com.example.robotcontrol;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -16,10 +17,13 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+
 import org.json.JSONObject;
 
 import java.io.BufferedInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.InetAddress;
@@ -29,7 +33,8 @@ import java.net.UnknownHostException;
 public class MainActivity extends AppCompatActivity {
 
     private Socket socket; //Create the socket instance
-    private BufferedInputStream in; //input stream instance
+//    private BufferedInputStream in; //input stream instance
+    private InputStream in;
     private PrintWriter out; //output stream instance
     private InetAddress address; //Put address of the raspberry pi here
     private int port; //Put the port number of the raspberry pi here
@@ -43,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5023;
+        port = 5007;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -73,12 +78,13 @@ public class MainActivity extends AppCompatActivity {
         //Instantiate the imageView
         robotCamera = findViewById(R.id.imageView);
         //Set a default image
-        robotCamera.setImageResource(R.drawable.ic_launcher_background);
+//        robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
         startButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                sendRequest("Null", "Autonomous");
+//                sendRequest("Null", "Autonomous");
+                mainFunctionality();
             }
         });
 
@@ -193,17 +199,19 @@ public class MainActivity extends AppCompatActivity {
         //While loop for handling until we close sockets
 //        while (true) {
             try {
-                //Connect it to the specified port and ip address
+                //Connect it to the specified port and ipaddress
                 socket = new Socket(address, port);
                 System.out.println("CONNECTED");
                 //Setup the input and output streams
-                in = new BufferedInputStream(socket.getInputStream());
+//                in = new BufferedInputStream(socket.getInputStream());
+                in = socket.getInputStream();
                 out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 
                 //If no exception, display a message so we know that it is connected
                 connectedStatus.setText("Connected");
-                liveFeedThread = new Thread(recieveFeed());
-                liveFeedThread.start();
+//                mainFunctionality();
+//                liveFeedThread = new Thread(recieveFeed());
+//                liveFeedThread.start();
 
 
                 //Start the mainFunction
@@ -237,15 +245,19 @@ public class MainActivity extends AppCompatActivity {
 
     //Start to listen and serve requests
     public void mainFunctionality() {
-        //create a bitmap factory instance
-        BitmapFactory converter = new BitmapFactory();
 
+        BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inSampleSize = 8;
         //Continually update the photo
         while (true) {
             //create a new bitmap
-            Bitmap image = converter.decodeStream(in);
-            //set the image as the newly converted bitmap
+            Bitmap image = BitmapFactory.decodeStream(in, null, options);
+            //set the image as the newly converted bitma[
+
             robotCamera.setImageBitmap(image);
+//            robotCamera.setImageBitmap(Bitmap.createScaledBitmap(image, robotCamera.getWidth() , robotCamera.getHeight() ,false));
+//            robotCamera.s
+//            robotCamera.setImageDrawable(new BitmapDrawable(getResources(), image));
         }
     }
 
