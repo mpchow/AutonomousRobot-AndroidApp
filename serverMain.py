@@ -18,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5035     # Port to listen on (non-privileged ports are > 1023)
+PORT = 5042     # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -70,7 +70,7 @@ class Error:
 
         if (errorTotal == 1):           # right sensor triggered
             self.count = 0
-            self.error = -1.5
+            self.error = -1.7
         elif (errorTotal == 11):        # middle and right sensors triggered
             self.count = 0
             self.error = -1
@@ -82,7 +82,7 @@ class Error:
             self.error = 1
         elif (errorTotal == 100):       # left sensor triggered
             self.count = 0
-            self.error = 1.5
+            self.error = 1.7
         elif (errorTotal == 111):       # all sensors triggered, most likely crossover
             self.count = 0
             self.error = 0
@@ -122,8 +122,8 @@ def parseJson(byteStream):
 # Function for robot to go straight
 def straight(kit):
     # both motors same speed
-    kit.motor1.throttle = 0.30
-    kit.motor2.throttle = 0.30
+    kit.motor1.throttle = 0.35
+    kit.motor2.throttle = 0.40
 
 # Function for robot to turn left
 def turnLeft(kit):
@@ -188,7 +188,7 @@ def writeImages(imageName):
 def captureStreamPIL():
     stream = io.BytesIO()
     camera.capture(stream, format='bmp')        # Take picture and store in stream
-    stream.seek(0)                              # Go to beginning of stream 
+    stream.seek(0)                              # Go to beginning of stream
     image = Image.open(stream)                  # Store as PIL Image object
 
     # Convert to byte array
@@ -196,7 +196,7 @@ def captureStreamPIL():
     image.save(imgByteArr, format='bmp')
     imgByteArrToReturn = imgByteArr.getvalue()
 
-    #Return to byte array 
+    #Return to byte array
     return imgByteArrToReturn
 
 def controller(kit):
@@ -244,7 +244,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     (conn, addr) = s.accept()
     print("Connected")
     with conn:
-        img = captureStreamPIL() #capture the image 
+        img = captureStreamPIL() #capture the image
         conn.send(img)           # send the image through socket
         time.sleep(1)
         camera.stop_preview()    # stop the preview
@@ -252,7 +252,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         input = conn.recv(1024)  # receive input from client
         noValue = input          # store initial input value - may be garbage
         conn.setblocking(0)      # set connection to be blocking
-        mode = "Stop"            # default mode to stop 
+        mode = "Stop"            # default mode to stop
         writeImages("firstGear.jpg")
 
         s.close()
@@ -278,6 +278,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     controller(kit)
                 elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
                     Type = jsonObj.get("Type")
+                    time.sleep(0.02)
                     if (Type == 'Forward'): # Move forward
                         straight(kit)
                     elif (Type == 'Left'):  # Move left
