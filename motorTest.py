@@ -38,20 +38,21 @@ def off():
 
 try:
     while True:
+        # while loop to test the app straight, left and right functions
         print("Straight")
-        straight()
-        sleep(2)
+        straight() # call straight function
+        sleep(2) # sleep 2 seconds
         print("Left")
-        turnLeft()
-        sleep(2)
+        turnLeft() # call left function
+        sleep(2) # sleep 2 seconds
         print("Right")
-        turnRight()
-        sleep(2)
-        off()
-        sleep(2)
+        turnRight() # call right function
+        sleep(2) # sleep 2 seconds
+        off() # call function to turn off robot
+        sleep(2) # sleep 2 seconds
 
 except KeyboardInterrupt:
-    off()
+    off() # if keyboard interupt is detected turn off robot
 
 #comment out if you want
 try:
