@@ -33,10 +33,10 @@ disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   #
 # Make sure to create image with mode 'RGB' for full color.
 if disp.rotation % 180 == 90:
     height = disp.width   # we swap height/width to rotate it to landscape!
-    width = disp.height
+    width = disp.height # set width of image
 else:
     width = disp.width   # we swap height/width to rotate it to landscape!
-    height = disp.height
+    height = disp.height # set height of image
 
 image = Image.new('RGB', (width, height))
 
@@ -44,19 +44,17 @@ image = Image.new('RGB', (width, height))
 draw = ImageDraw.Draw(image)
 
 # Draw a green filled box as the background
-draw.rectangle((0, 0, width, height), fill=(0, 255, 0))
-disp.image(image)
+draw.rectangle((0, 0, width, height), fill=(0, 255, 0)) # draw a rectangle of LCD
+disp.image(image) # display that on LCD
 
 # Draw a smaller inner purple rectangle
 draw.rectangle((10, 10, 100, 100),
                fill=(170, 0, 136))
-print(width)
-print(height)
 # Load a TTF Font
 font = ImageFont.truetype('/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf', FONTSIZE)
 
 # Draw Some Text
-text = "Hello World!"
+text = "Hello World!" # text to put on LCD
 (font_width, font_height) = font.getsize(text)
 draw.text((width//2 - font_width//2, height//2 - font_height//2),
           text, font=font, fill=(255, 255, 0))
