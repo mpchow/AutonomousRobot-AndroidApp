@@ -14,10 +14,13 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5016       # Port to listen on (non-privileged ports are > 1023)
+PORT = 5017      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
+
+#Instantiate the motorkit instance
+kit = MotorKit()
 
 # Assign sensor pins
 sensor1 = 26
@@ -42,7 +45,7 @@ spi = board.SPI()
 # 1.44" ST7735R
 disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
 
-# Function to parse json 
+# Function to parse json
 def parseJson(byteStream):
     # Decode UTF-8 bytes to unicode
     # To make valid JSON, replace single quotes with double quotes
@@ -55,34 +58,35 @@ def parseJson(byteStream):
 
 # Function for robot to go straight
 def straight():
+    global kit
     kit.motor1.throttle = .25
     kit.motor2.throttle = .25
-    sleep(1)
+    time.sleep(1)
     kit.motor1.throttle = 0
     kit.motor2.throttle = 0
 
 # Function for robot to turn left
 def turnLeft():
+    global kit
     kit.motor1.throttle = 0.25
     kit.motor2.throttle = 0.5
-    sleep(1)
+    time.sleep(1)
     kit.motor1.throttle = 0
     kit.motor2.throttle = 0
 
 # Function for robot to turn right
 def turnRight():
+    global kit
     kit.motor1.throttle = 0.5
     kit.motor2.throttle = 0.25
-    sleep(1)
+    time.sleep(1)
     kit.motor1.throttle = 0
     kit.motor2.throttle = 0
 
 def off():
+    global kit
     kit.motor1.throttle = 0.0
     kit.motor2.throttle = 0.0
-    sleep(1)
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
 
 #parameter is the imageName to write to board
 def writeImages(imageName):
@@ -126,9 +130,8 @@ def writeImages(imageName):
     disp.image(image)
 
 def controller():
+    global kit
 
-    #Instantiate the motorkit instance
-    kit = MotorKit()
     #Initially start the motors at same speed so they are running straight
     kit.motor1.throttle = 0.0
     kit.motor2.throttle = 0.0
@@ -140,7 +143,7 @@ def controller():
         error.getOptics()
         PID = error.calculatePID()
         time.sleep(0.02)
-        
+
         # Print stop image if counted to 25
         if (error.count == 25):
             writeImages("stopGear.jpg")
@@ -218,8 +221,9 @@ class Error:
 
 
 
-# Wait for client connection 
+# Wait for client connection
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+    off()
     s.bind((HOST, PORT))
     s.listen()
     (conn, addr) = s.accept()
@@ -229,7 +233,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         input = conn.recv(1024)
         noValue = input
 
-        # Once connected, continuously check for input from app 
+        # Once connected, continuously check for input from app
         while True:
             input = conn.recv(1024)
             print(input)
@@ -238,7 +242,7 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 parseJson(input)
                 jsonObj = parseJson(input)
                 mode = jsonObj.get('Mode')
-                
+
             if (mode == 'Autonomous'):
                 controller()
             else:
@@ -251,5 +255,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                     turnRight()
                 else:
                     off()
+
 
         s.close()
