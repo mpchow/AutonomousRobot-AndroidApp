@@ -8,6 +8,9 @@ import picamera
 # from adafruit_st7735r import ST7735R
 # import adafruit_imageload
 
+PORT = 5017       # Port to listen on (non-privileged ports are > 1023)
+HOST = ''
+
 camera = PiCamera()
 
 # stream = picamera.PiCameraCircularIO(camera, splitter_port=2)
