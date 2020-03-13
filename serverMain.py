@@ -187,14 +187,16 @@ def writeImages(imageName):
 # Reference for sending stream: https://picamera.readthedocs.io/en/release-1.10/recipes1.html
 def captureStreamPIL():
     stream = io.BytesIO()
-    camera.capture(stream, format='bmp')
-    stream.seek(0)
-    image = Image.open(stream)
+    camera.capture(stream, format='bmp')        # Take picture and store in stream
+    stream.seek(0)                              # Go to beginning of stream 
+    image = Image.open(stream)                  # Store as PIL Image object
 
+    # Convert to byte array
     imgByteArr = io.BytesIO()
     image.save(imgByteArr, format='bmp')
     imgByteArrToReturn = imgByteArr.getvalue()
 
+    #Return to byte array 
     return imgByteArrToReturn
 
 def controller(kit):
@@ -261,17 +263,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         writeImages("firstGear.jpg")
         print('after wrieimg')
 
-        #camera.start_preview()
-        # Camera warm-up time
-        #time.sleep(2)
-
-
-        #img = captureStreamPIL()
-        #print("Before")
-        #conn.send(img)
-        #print("After")
-        #time.sleep(10)
-        #camera.stop_preview()
         s.close()
 
         try:
