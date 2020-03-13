@@ -71,7 +71,17 @@ def captureStreamPIL():
     camera.capture(stream, format='bmp')
     stream.seek(0)
     image = Image.open(stream)
-    return image
+
+    # pil_im = Image.fromarray(image)
+    # b = io.BytesIO()
+    # pil_im.save(b, 'jpeg')
+    # im_bytes = b.getvalue()
+
+    imgByteArr = io.BytesIO()
+    image.save(imgByteArr, format='PNG')
+    imgByteArr = imgByteArr.getvalue()
+
+    return imgByteArr
 
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -91,8 +101,11 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         #     buf = fd.read(1024)
         # s.send(stream)
         img = captureStreamPIL()
-        b = bytearray(img)
-        conn.send(b)
+        conn.send(img)
+        
+
+        # b = bytearray(img)
+        # conn.send(b)
     
     camera.stop_preview()
     s.close()
