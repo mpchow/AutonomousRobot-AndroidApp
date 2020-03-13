@@ -3,6 +3,9 @@ from adafruit_motorkit import MotorKit
 import time
 import digitalio
 import board
+import picamera
+import io
+from PIL import Image
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.ili9341 as ili9341
 import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
@@ -19,6 +22,7 @@ PORT = 5023      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
+camera = PiCamera()
 
 # Assign sensor pins
 sensor1 = 26
@@ -42,7 +46,6 @@ BAUDRATE = 24000000
 spi = board.SPI()
 # 1.44" ST7735R
 disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
-camera = PiCamera()
 
 class Error:
     def __init__(self):
@@ -86,7 +89,6 @@ class Error:
         elif (errorTotal == 0):
             self.count = self.count + 1
 
-
     def getOptics(self):
         # sens1 = left sensor, sens2 = middle sensor, sens3 = right sensor
         sens1 = GPIO.input(sensor1)
@@ -119,20 +121,20 @@ def parseJson(byteStream):
 # Function for robot to go straight
 def straight(kit):
     # both motors same speed
-    kit.motor1.throttle = 0.20
-    kit.motor2.throttle = 0.20
+    kit.motor1.throttle = 0.40
+    kit.motor2.throttle = 0.40
 
 # Function for robot to turn left
 def turnLeft(kit):
     # left motor slower than right
-    kit.motor1.throttle = 0.15
+    kit.motor1.throttle = 0.25
     kit.motor2.throttle = 0.5
 
 # Function for robot to turn right
 def turnRight(kit):
     # right motor slower than left
     kit.motor1.throttle = 0.5
-    kit.motor2.throttle = 0.15
+    kit.motor2.throttle = 0.25
 
 # Function for robot to turn off
 def off(kit):
@@ -181,19 +183,6 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-# Reference for sending stream: https://picamera.readthedocs.io/en/release-1.10/recipes1.html
-def captureStreamPIL():
-    stream = io.BytesIO()
-    camera.capture(stream, format='bmp')
-    stream.seek(0)
-    image = Image.open(stream)
-
-    imgByteArr = io.BytesIO()
-    image.save(imgByteArr, format='bmp')
-    imgByteArrToReturn = imgByteArr.getvalue()
-
-    return imgByteArrToReturn
-
 def controller(kit):
     global error
 
@@ -222,6 +211,12 @@ def controller(kit):
         kit.motor1.throttle = 0.0
         kit.motor2.throttle = 0.0
 
+def captureStreamPIL():
+    stream = io.BytesIO()
+    camera.capture(stream, format='jpg')
+    stream.seek(0)
+    image = Image.open(stream)
+    return image
 
 #Instantiate the motorkit instance
 kit = MotorKit()
@@ -240,10 +235,6 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         conn.setblocking(0)
         mode = "Autonomous"
 
-        camera.start_preview()
-        # Camera warm-up time
-        time.sleep(2)
-
         # Once connected, continuously check for input from app
         while True:
             try:
@@ -258,11 +249,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 jsonObj = parseJson(input)
                 mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
-            if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
-                img = captureStreamPIL()
-                conn.send(img)
+            if (mode == 'Camera'):      # If Camera mode, send image to LC
+                cameraCapture = captureStreamPIL()
+                writeImages(cameraCapture)
+                sleep(1)
+            elif (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
                 controller(kit)
             elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
+                writeImages("firstGear.jpg")
                 Type = jsonObj.get("Type")
                 if (Type == 'Forward'): # Move forward
                     straight(kit)
@@ -275,5 +269,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             else:
                 off(kit)
 
-        camera.stop_preview()
         s.close()
