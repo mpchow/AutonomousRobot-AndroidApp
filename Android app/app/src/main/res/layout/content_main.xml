@@ -108,13 +108,15 @@
         android:layout_marginEnd="142dp"
         android:layout_marginRight="142dp"
         android:layout_marginBottom="26dp"
+        android:drawable="@drawable/ic_launcher_foreground"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.474"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.746"/>
-<!--        tools:srcCompat="@tools:sample/avatars" -->
+        app:layout_constraintVertical_bias="0.746"
+        tools:srcCompat="@tools:sample/avatars" />
+
 
 
     <Switch

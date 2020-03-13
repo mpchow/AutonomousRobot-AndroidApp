@@ -3,6 +3,7 @@ package com.example.robotcontrol;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.view.Menu;
@@ -42,13 +43,14 @@ public class MainActivity extends AppCompatActivity {
     private Switch modeToggle;
     private TextView modeStatus;
     private Thread liveFeedThread;
+    private Button forwardButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         //Instantiate the port
-        port = 5007;
+        port = 5059;
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 
         StrictMode.setThreadPolicy(policy);
@@ -66,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         //Instantiate the mode status
         modeStatus = (TextView) findViewById(R.id.ModeStatus);
         //Get the forwardButton
-        final Button forwardButton = (Button) findViewById(R.id.forward);
+        forwardButton = (Button) findViewById(R.id.forward);
         //Get the leftButton
         final Button leftButton = (Button) findViewById(R.id.leftwards);
         //Get the rightbutton
@@ -75,8 +77,11 @@ public class MainActivity extends AppCompatActivity {
         final Button stopButton = (Button) findViewById(R.id.stop);
         //Get the startButton
         final Button startButton = (Button) findViewById(R.id.Start);
+
         //Instantiate the imageView
         robotCamera = findViewById(R.id.imageView);
+        robotCamera.setLayerType(View.LAYER_TYPE_SOFTWARE, null);
+        robotCamera.setVisibility(View.VISIBLE);
         //Set a default image
 //        robotCamera.setImageResource(R.drawable.ic_launcher_background);
 
@@ -245,20 +250,30 @@ public class MainActivity extends AppCompatActivity {
 
     //Start to listen and serve requests
     public void mainFunctionality() {
-
         BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inSampleSize = 8;
+        options.inSampleSize = 32;
         //Continually update the photo
-        while (true) {
+//        while (true) {
             //create a new bitmap
             Bitmap image = BitmapFactory.decodeStream(in, null, options);
             //set the image as the newly converted bitma[
+            if (image != null) {
+//                forwardButton.setBackground(new BitmapDrawable(getResources(),image));
+//                robotCamera.setImageBitmap(null);
+                robotCamera.setImageBitmap(image);
+//                robotCamera.setImageBitmap(image);
 
-            robotCamera.setImageBitmap(image);
+                robotCamera.setBackground(new BitmapDrawable(getResources(), image));
+            }
+            else {
+                System.out.println("YEEET");
+            }
+
+
 //            robotCamera.setImageBitmap(Bitmap.createScaledBitmap(image, robotCamera.getWidth() , robotCamera.getHeight() ,false));
 //            robotCamera.s
 //            robotCamera.setImageDrawable(new BitmapDrawable(getResources(), image));
-        }
+//        }
     }
 
     //Send a request
