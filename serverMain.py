@@ -42,6 +42,7 @@ BAUDRATE = 24000000
 spi = board.SPI()
 # 1.44" ST7735R
 disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3, cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
+camera = PiCamera()
 
 class Error:
     def __init__(self):
@@ -180,6 +181,19 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
+# Reference for sending stream: https://picamera.readthedocs.io/en/release-1.10/recipes1.html
+def captureStreamPIL():
+    stream = io.BytesIO()
+    camera.capture(stream, format='bmp')
+    stream.seek(0)
+    image = Image.open(stream)
+
+    imgByteArr = io.BytesIO()
+    image.save(imgByteArr, format='bmp')
+    imgByteArrToReturn = imgByteArr.getvalue()
+
+    return imgByteArrToReturn
+
 def controller(kit):
     global error
 
@@ -226,6 +240,10 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
         conn.setblocking(0)
         mode = "Autonomous"
 
+        camera.start_preview()
+        # Camera warm-up time
+        time.sleep(2)
+
         # Once connected, continuously check for input from app
         while True:
             try:
@@ -241,6 +259,8 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
             if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
+                img = captureStreamPIL()
+                conn.send(img)
                 controller(kit)
             elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
                 Type = jsonObj.get("Type")
@@ -255,4 +275,5 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
             else:
                 off(kit)
 
+        camera.stop_preview()
         s.close()
