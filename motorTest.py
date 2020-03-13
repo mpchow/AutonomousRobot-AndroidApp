@@ -7,34 +7,34 @@ kit = MotorKit()
 
 # Function for robot to go straight
 def straight():
-    kit.motor1.throttle = .25
-    kit.motor2.throttle = .25
-    sleep(1)
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
+    kit.motor1.throttle = .25 # set left motor speed
+    kit.motor2.throttle = .25 # set right motor speed
+    sleep(1) # sleep for 1 second
+    kit.motor1.throttle = 0 # set left motor speed
+    kit.motor2.throttle = 0 # set right motor speed
 
 # Function for robot to turn left
 def turnLeft():
-    kit.motor1.throttle = 0.25
-    kit.motor2.throttle = 0.5
-    sleep(1)
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
+    kit.motor1.throttle = 0.25 # set left motor speed
+    kit.motor2.throttle = 0.5 # set right motor speed
+    sleep(1) # sleep for 1 second
+    kit.motor1.throttle = 0 # set left motor speed
+    kit.motor2.throttle = 0 # set right motor speed
 
 # Function for robot to turn right
 def turnRight():
-    kit.motor1.throttle = 0.5
-    kit.motor2.throttle = 0.25
-    sleep(1)
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
+    kit.motor1.throttle = 0.5 # set left motor speed
+    kit.motor2.throttle = 0.25 # set right motor speed
+    sleep(1) # sleep for 1 second
+    kit.motor1.throttle = 0 # set left motor speed
+    kit.motor2.throttle = 0 # set right motor speed
 
 def off():
-    kit.motor1.throttle = 0.0
-    kit.motor2.throttle = 0.0
-    sleep(1)
-    kit.motor1.throttle = 0
-    kit.motor2.throttle = 0
+    kit.motor1.throttle = 0.0 # set left motor speed
+    kit.motor2.throttle = 0.0 # set right motor speed
+    sleep(1) # sleep for 1 second
+    kit.motor1.throttle = 0 # set left motor speed
+    kit.motor2.throttle = 0 # set right motor speed
 
 try:
     while True:
@@ -58,4 +58,4 @@ except KeyboardInterrupt:
 try:
     PIDControl.controller()
 except KeyboardInterrupt:
-    off()
+    off() # if keyboard interupt happens turn everything off

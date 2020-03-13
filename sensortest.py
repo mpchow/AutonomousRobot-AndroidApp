@@ -1,3 +1,4 @@
+#import statements
 from RPi import GPIO
 from time import sleep
 

@@ -1,3 +1,4 @@
+#import statements
 from RPi import GPIO
 from time import sleep
 
@@ -16,11 +17,11 @@ sensor4 = 19
 sensor5 = 26
 
 # Setup GPIO inputs
-GPIO.setup(sensor1, GPIO.IN)
-GPIO.setup(sensor2, GPIO.IN)
-GPIO.setup(sensor3, GPIO.IN)
-GPIO.setup(sensor4, GPIO.IN)
-GPIO.setup(sensor5, GPIO.IN)
+GPIO.setup(sensor1, GPIO.IN) # setting up sensor 1
+GPIO.setup(sensor2, GPIO.IN) # setting up sensor 2
+GPIO.setup(sensor3, GPIO.IN) # setting up sensor 3
+GPIO.setup(sensor4, GPIO.IN) # setting up sensor 4
+GPIO.setup(sensor5, GPIO.IN) # setting up sensor 5
 
 errorObj = Error()
 
@@ -79,8 +80,8 @@ def controller():
     #Instantiate the motorkit instance
     kit = MotorKit()
 	#Initially start the motors at same speed so they are running straight
-    kit.motor1.throttle = 0.75
-    kit.motor2.throttle = 0.75
+    kit.motor1.throttle = 0.75 # set left motor forward
+    kit.motor2.throttle = 0.75 # set right motor forward
     #Instantiate the error class to calculate things for us
 
     #Loop for the feedback loop
@@ -88,8 +89,8 @@ def controller():
         #Calculate the PID value
         PID = errorObj.calculatePID()
         #summ the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
-        kit.motor1.throttle = 0.75 + PID
-        kit.motor2.throttle = 0.75 - PID
+        kit.motor1.throttle = 0.75 + PID # set left motor
+        kit.motor2.throttle = 0.75 - PID # set right motor
 
 # Function to get optical sensor outputs, store in array and returnz
 def getOptics():
@@ -101,11 +102,12 @@ def getOptics():
 	sens5 = GPIO.input(sensor5) # get sensor 5 value
 	errorObj.sensorVal = [sens1, sens2, sens3, sens4, sens5] # put all sensor values into the sensor array
 	
+# while loop to test the code
 try:
     while True:
-        sensArr = getOptics()
+        sensArr = getOptics() # get sensor values
         for x in sensArr:
-            print(x)
-        sleep(2)
+            print(x) # print all sensor values
+        sleep(2) # wait 2 seconds
 except KeyboardInterrupt:
 	GPIO.cleanup()

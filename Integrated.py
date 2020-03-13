@@ -21,14 +21,14 @@ sensor2 = 19
 sensor3 = 13
 
 # Setup GPIO inputs
-GPIO.setup(sensor1, GPIO.IN)
-GPIO.setup(sensor2, GPIO.IN)
-GPIO.setup(sensor3, GPIO.IN)
+GPIO.setup(sensor1, GPIO.IN) # set up sensor 1
+GPIO.setup(sensor2, GPIO.IN) # set up sensor 2
+GPIO.setup(sensor3, GPIO.IN) # set up sensor 3
 
 # Configuration for CS and DC pins (these are PiTFT defaults):
-cs_pin = digitalio.DigitalInOut(board.CE0)
-dc_pin = digitalio.DigitalInOut(board.D25)
-reset_pin = digitalio.DigitalInOut(board.D24)
+cs_pin = digitalio.DigitalInOut(board.CE0) # set up CS pin for lcd
+dc_pin = digitalio.DigitalInOut(board.D25) # set up DC pin for lcd
+reset_pin = digitalio.DigitalInOut(board.D24) # set up reset pin for lcd
 
 # Config for display baudrate (default max is 24mhz):
 BAUDRATE = 24000000
@@ -45,11 +45,11 @@ def writeImages(imageName):
     # Make sure to create image with mode 'RGB' for full color.
     if disp.rotation % 180 == 90:
         height = disp.width   # we swap height/width to rotate it to landscape!
-        width = disp.height
+        width = disp.height # set width for lcd
     else:
         width = disp.width   # we swap height/width to rotate it to landscape!
-        height = disp.height
-    image = Image.new('RGB', (width, height))
+        height = disp.height # set height for lcd
+    image = Image.new('RGB', (width, height)) # create image for lcd
 
     # Get drawing object to draw on image.
     draw = ImageDraw.Draw(image)
@@ -99,21 +99,22 @@ def controller():
             # Print stop image if counted to 25
             if (error.count == 25):
                 writeImages("stopGear.jpg")
-                kit.motor1.throttle = 0.0
-                kit.motor2.throttle = 0.0
+                kit.motor1.throttle = 0.0 # set left motor speed
+                kit.motor2.throttle = 0.0 # set right motor speed
                 break
             time.sleep(0.02)
             if (PID == 0.0):
-                kit.motor1.throttle = 0.40
-                kit.motor2.throttle = 0.40
+                kit.motor1.throttle = 0.40 # set left motor speed
+                kit.motor2.throttle = 0.40 # set right motor speed
             #sum the pid value with the base throttle of 0.75 to turn left or right based on imbalances in the throttle values
             else :
                 kit.motor1.throttle = 0.25 + PID #Assuming this is the left motor
                 kit.motor2.throttle = 0.25 - PID #Assuming this is the right motor
 
     except KeyboardInterrupt:
-        kit.motor1.throttle = 0.0
-        kit.motor2.throttle = 0.0
+        # turn off motors
+        kit.motor1.throttle = 0.0 # set left motor speed
+        kit.motor2.throttle = 0.0 # set right motor speed
 
 class Error:
     def __init__(self):
@@ -137,32 +138,33 @@ class Error:
         errorTotal += self.sensorVal[2]
 
         if (errorTotal == 1):           # right sensor triggered
-            self.count = 0
-            self.error = -1.7
+            self.count = 0 # set count depending on errorTotal
+            self.error = -1.7 # set error depening on errorTotal
         elif (errorTotal == 11):        # middle and right sensors triggered
-            self.count = 0
-            self.error = -1
+            self.count = 0 # set count depending on error
+            self.error = -1 # set error depening on errorTotal
         elif (errorTotal == 10):        # middle sensor triggered
-            self.count = 0
-            self.error = 0
+            self.count = 0 # set count depending on errorTotal
+            self.error = 0 # set error depening on errorTotal
         elif (errorTotal == 110):       # middle and left sensors triggered
-            self.count = 0
-            self.error = 1
+            self.count = 0 # set count depending on errorTotal
+            self.error = 1 # set error depening on errorTotal
         elif (errorTotal == 100):       # left sensor triggered
-            self.count = 0
-            self.error = 1.7
+            self.count = 0 # set count depending on errorTotal
+            self.error = 1.7 # set error depening on errorTotal
         elif (errorTotal == 111):       # all sensors triggered, most likely crossover
-            self.count = 0
-            self.error = 0
+            self.count = 0 # set count depending on errorTotal
+            self.error = 0 # set error depening on errorTotal
         elif (errorTotal == 0):
-            self.count = self.count + 1
+            self.count = self.count + 1 # set count depending on errorTotal
 
 
     def getOptics(self):
-        sens1 = GPIO.input(sensor1)
-        sens2 = GPIO.input(sensor2)
-        sens3 = GPIO.input(sensor3)
-        self.sensorVal = [sens1, sens2, sens3]
+        # sens1 = left sensor, sens2 = middle sensor, sens3 = right sensor
+        sens1 = GPIO.input(sensor1) # get sensor value for sensor 1
+        sens2 = GPIO.input(sensor2) # get sensor value for sensor 2
+        sens3 = GPIO.input(sensor3) # get sensor value for sensor 3
+        self.sensorVal = [sens1, sens2, sens3] # put sensor values in array
 
 
     def calculatePID(self):
@@ -173,4 +175,4 @@ class Error:
         self.prevError = self.error     # set prevError to new error for next iteration
         return pidValue
 
-controller()
+controller() # main controll loop

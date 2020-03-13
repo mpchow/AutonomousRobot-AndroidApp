@@ -15,9 +15,9 @@ def writeText(text):
     BORDER = 5
     FONTSIZE = 16
     # Configuration for CS and DC pins (these are PiTFT defaults):
-    cs_pin = digitalio.DigitalInOut(board.CE0)
-    dc_pin = digitalio.DigitalInOut(board.D25)
-    reset_pin = digitalio.DigitalInOut(board.D24)
+    cs_pin = digitalio.DigitalInOut(board.CE0) # setting up the cs pin
+    dc_pin = digitalio.DigitalInOut(board.D25) # setting up the cd pin
+    reset_pin = digitalio.DigitalInOut(board.D24) # setting up the reset pin
 
     # Config for display baudrate (default max is 24mhz):
     BAUDRATE = 24000000
@@ -26,6 +26,7 @@ def writeText(text):
     spi = board.SPI()
     disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   # 1.44" ST7735R
                            cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
+    # setting up the 1.44 inch lcd
     # pylint: enable=line-too-long
 
     # Create blank image for drawing.
@@ -58,23 +59,24 @@ def writeText(text):
     draw.text((width//2 - font_width//2, height//2 - font_height//2),
           text, font=font, fill=(255, 255, 0))
 
-    # Display image.
+    # Display image on the LCD
     disp.image(image)
 
 #parameter is the imageName to write to board
 def writeImages(imageName):
     # Configuration for CS and DC pins (these are PiTFT defaults):
-    cs_pin = digitalio.DigitalInOut(board.CE0)
-    dc_pin = digitalio.DigitalInOut(board.D25)
-    reset_pin = digitalio.DigitalInOut(board.D24)
+    cs_pin = digitalio.DigitalInOut(board.CE0) # setting up cs pin
+    dc_pin = digitalio.DigitalInOut(board.D25) # setting up dc pin
+    reset_pin = digitalio.DigitalInOut(board.D24) # setting up reset pin
 
     # Config for display baudrate (default max is 24mhz):
     BAUDRATE = 24000000
 
     # Setup SPI bus using hardware SPI:
-    spi = board.SPI()
+    spi = board.SPI() # setting up SPI board
     disp = st7735.ST7735R(spi, rotation=270, height=128, x_offset=2, y_offset=3,   # 1.44" ST7735R
                            cs=cs_pin, dc=dc_pin, rst=reset_pin, baudrate=BAUDRATE)
+    # creating the 1.44 inch LCD object
     # pylint: enable=line-too-long
 
     # Create blank image for drawing.
@@ -115,6 +117,7 @@ def writeImages(imageName):
     # Display image.
     disp.image(image)
 
-writeText()
-time.sleep(5)
-writeImages("blinka.jpg")
+writeText() # call write text function
+time.sleep(5) # wait 5 seconds
+writeImages("blinka.jpg") # call write image on the blinka jpg file
+# these three lines are to test the function
