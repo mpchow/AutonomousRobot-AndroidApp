@@ -28,7 +28,8 @@ class Error:
     def __init__(self):
         # sensorVal[0] = far left, sensorVal[1] = mid left, sensorVal[2] = middle
         # sensorVal[3] = mid right, sensorVal[4] = far right
-        self.sensorVal = [0, 0, 0, 0, 0]
+        # setting up the class values
+        self.sensorVal = [0, 0, 0, 0, 0] # sensor value arrays
         self.error = 0
         self.prevError = 0
         self.integral = 0
@@ -93,12 +94,12 @@ def controller():
 # Function to get optical sensor outputs, store in array and returnz
 def getOptics():
 	global errorObj
-	sens1 = GPIO.input(sensor1)
-	sens2 = GPIO.input(sensor2)
-	sens3 = GPIO.input(sensor3)
-	sens4 = GPIO.input(sensor4)
-	sens5 = GPIO.input(sensor5)
-	errorObj.sensorVal = [sens1, sens2, sens3, sens4, sens5]
+	sens1 = GPIO.input(sensor1) # get sensor 1 value
+	sens2 = GPIO.input(sensor2) # get sensor 2 value
+	sens3 = GPIO.input(sensor3) # get sensor 3 value
+	sens4 = GPIO.input(sensor4) # get sensor 4 value
+	sens5 = GPIO.input(sensor5) # get sensor 5 value
+	errorObj.sensorVal = [sens1, sens2, sens3, sens4, sens5] # put all sensor values into the sensor array
 	
 try:
     while True:

@@ -24,6 +24,38 @@
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
+        android:id="@+id/Start"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:background="#FFFFFF"
+        android:hapticFeedbackEnabled="true"
+        android:text="Start"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightwards"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toEndOf="@+id/leftwards"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.251" />
+
+    <Button
+        android:id="@+id/stop"
+        style="@style/Widget.AppCompat.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="58dp"
+        android:background="#FFFFFF"
+        android:hapticFeedbackEnabled="true"
+        android:text="Stop"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/rightwards"
+        app:layout_constraintHorizontal_bias="0.506"
+        app:layout_constraintStart_toEndOf="@+id/leftwards"
+        app:layout_constraintTop_toBottomOf="@+id/textView"
+        app:layout_constraintVertical_bias="0.807" />
+
+    <Button
         android:id="@+id/leftwards"
         style="@style/Widget.AppCompat.Button"
         android:layout_width="wrap_content"
@@ -76,6 +108,7 @@
         android:layout_marginEnd="142dp"
         android:layout_marginRight="142dp"
         android:layout_marginBottom="26dp"
+        android:drawable="@drawable/ic_launcher_foreground"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.474"
@@ -83,6 +116,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.746"
         tools:srcCompat="@tools:sample/avatars" />
+
+
 
     <Switch
         android:id="@+id/modeToggle"
@@ -118,4 +153,5 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/modeToggle"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,6 +3,9 @@ from adafruit_motorkit import MotorKit
 import time
 import digitalio
 import board
+import picamera
+import io
+from PIL import Image
 from PIL import Image, ImageDraw, ImageFont
 import adafruit_rgb_display.ili9341 as ili9341
 import adafruit_rgb_display.st7789 as st7789        # pylint: disable=unused-import
@@ -19,6 +22,7 @@ PORT = 5023      # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
+camera = PiCamera()
 
 # Assign sensor pins
 sensor1 = 26
@@ -84,7 +88,6 @@ class Error:
             self.error = 0
         elif (errorTotal == 0):
             self.count = self.count + 1
-
 
     def getOptics(self):
         # sens1 = left sensor, sens2 = middle sensor, sens3 = right sensor
@@ -208,6 +211,12 @@ def controller(kit):
         kit.motor1.throttle = 0.0
         kit.motor2.throttle = 0.0
 
+def captureStreamPIL():
+    stream = io.BytesIO()
+    camera.capture(stream, format='jpg')
+    stream.seek(0)
+    image = Image.open(stream)
+    return image
 
 #Instantiate the motorkit instance
 kit = MotorKit()
@@ -240,9 +249,14 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
                 jsonObj = parseJson(input)
                 mode = jsonObj.get('Mode')  # Get 'Mode' from parsed Json
 
-            if (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
+            if (mode == 'Camera'):      # If Camera mode, send image to LC
+                cameraCapture = captureStreamPIL()
+                writeImages(cameraCapture)
+                sleep(1)
+            elif (mode == 'Autonomous'):  # If Autonomous mode, run main functionality code
                 controller(kit)
             elif (mode == 'Remote'):    # If Remote mode, check if forard, left, right, or stop button clicked
+                writeImages("firstGear.jpg")
                 Type = jsonObj.get("Type")
                 if (Type == 'Forward'): # Move forward
                     straight(kit)
