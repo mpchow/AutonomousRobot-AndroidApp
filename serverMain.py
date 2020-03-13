@@ -18,7 +18,7 @@ import adafruit_rgb_display.ssd1331 as ssd1331      # pylint: disable=unused-imp
 import json
 import socket
 
-PORT = 5038      # Port to listen on (non-privileged ports are > 1023)
+PORT = 5031     # Port to listen on (non-privileged ports are > 1023)
 HOST = ''
 
 GPIO.setmode(GPIO.BCM)
@@ -225,8 +225,13 @@ def controller(kit):
         kit.motor2.throttle = 0.0
 
 
+
 #Instantiate the motorkit instance
 kit = MotorKit()
+
+camera.start_preview()
+# Camera warm-up time
+time.sleep(2)
 
 # Wait for client connection
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
@@ -237,15 +242,36 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     print("Connected")
     with conn:
         print('Connected by', addr)
-        input = conn.recv(1024)
-        noValue = input
-        conn.setblocking(0)
-        mode = "Autonomous"
-        writeImages("firstGear.jpg")
+        img = captureStreamPIL()
+        print("Before")
+        conn.send(img)
+        print("After")
+        time.sleep(10)
+        camera.stop_preview()
 
-        camera.start_preview()
+        input = conn.recv(1024)
+        print('after nput')
+        noValue = input
+        print('after noVal')
+        conn.setblocking(0)
+        print('after blocking')
+        mode = "Autonomous"
+        print('after mode')
+        writeImages("firstGear.jpg")
+        print('after wrieimg')
+
+        #camera.start_preview()
         # Camera warm-up time
-        time.sleep(2)
+        #time.sleep(2)
+
+
+        #img = captureStreamPIL()
+        #print("Before")
+        #conn.send(img)
+        #print("After")
+        #time.sleep(10)
+        #camera.stop_preview()
+        s.close()
 
         # Once connected, continuously check for input from app
         while True:
