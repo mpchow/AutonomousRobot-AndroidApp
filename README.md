@@ -1,1 +1,3 @@
-A project to create a line following robot that can switch between autonomous and remote control modes. The robot utilizes python on a raspberry pi to connect to an Android application written in Java.
+A project to create a line following robot that can switch between autonomous and remote control modes. The robot is built with python on a raspberry pi to connect to an Android application written in Java. The robot utilizes an array of three optical sensors for PID control and while the robot is moving autonomously, an LCD screen will display what kind of movement is occurring.
+
+On startup, the robot will turn on first, then the app will be started to connect to the raspberry pi through sockets. The camera attached to the robot will take a picture and then send it to the application. From then the user can determine what mode to set the robot to and to control its movement.
