@@ -1,1 +1,1 @@
-# P1_A_G4
+A project to create a line following robot that can switch between autonomous and remote control modes. The robot utilizes python on a raspberry pi to connect to an Android application written in Java.
